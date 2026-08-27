@@ -1,0 +1,19 @@
+# dsh-webmcp bundle patch.
+#
+# Purely additive `insert` row (never overrides a shipped row). The config
+# block below is the plugin's default configuration; every field is optional.
+
+- insert:
+    - id: webmcp
+      name: dsh-webmcp
+      config:
+        # Run the helper browser without a visible window.
+        headless: true
+        # Navigation timeout for webmcp_discover / webmcp_invoke, in ms.
+        navigationTimeoutMs: 30000
+        # Max wall time for one in-page tool invocation, in ms.
+        invokeTimeoutMs: 20000
+        # Explicit Chromium/Chrome executable. Empty = auto-resolve:
+        # env DSH_WEBMCP_CHROMIUM -> Playwright ms-playwright cache ->
+        # system Chrome via playwright's channel resolution.
+        chromiumPath: ""

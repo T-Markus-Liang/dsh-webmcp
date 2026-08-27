@@ -1,0 +1,51 @@
+{
+  "name": "dsh-webmcp",
+  "version": "0.1.0",
+  "description": "WebMCP bridge for DeepSeek Harness: let your agent discover and call tools that websites expose via the W3C WebMCP protocol (site tools), through a built-in headless browser.",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node --test test/",
+    "check": "node --check lib/index.js && node --check lib/page-snippet.js && node --test test/"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "webmcp",
+    "mcp",
+    "browser-automation",
+    "agent-tools",
+    "site-tools"
+  ],
+  "author": "T-Markus-Liang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/T-Markus-Liang/dsh-webmcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/T-Markus-Liang/dsh-webmcp/issues"
+  },
+  "homepage": "https://github.com/T-Markus-Liang/dsh-webmcp#readme",
+  "dependencies": {
+    "playwright-core": "^1.49.0"
+  },
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  }
+}

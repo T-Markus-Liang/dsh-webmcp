@@ -1,0 +1,103 @@
+<!--
+  Logo placeholder — replace with the dsh-webmcp logo.
+  Suggested banner: a minimal Chromium + WebMCP glyph with the wordmark "dsh-webmcp".
+-->
+
+English | [中文](README.zh.md)
+
+# dsh-webmcp
+
+**dsh-webmcp** is a DeepSeek Harness plugin that lets an agent discover and invoke the site tools a website exposes through the W3C WebMCP protocol, using a built-in headless Chromium.
+
+WebMCP is a W3C Web Agents Community Group standardization proposal ([github.com/webmachinelearning/webmcp](https://github.com/webmachinelearning/webmcp)). In 2026-08 OpenAI shipped site-tool support in the ChatGPT desktop built-in browser and launched a challenge around it; Google Chrome Labs also open-sourced `webmcp-tools`. This plugin brings that capability to a DeepSeek Harness agent without relying on an external browser or manual selector maintenance.
+
+## Why: WebMCP vs. traditional automation
+
+| Aspect | Traditional automation | WebMCP site tools |
+| --- | --- | --- |
+| How a site exposes actions | Hard-coded selectors and scripts you maintain | Protocol-declared surfaces (`navigator.modelContext`, `window.webmcp`, `form[data-webmcp-tool]`) |
+| Discovery | Reverse-engineer the page | `webmcp_discover` returns the normalized tool list |
+| Invocation | Replay clicks and typed input | `webmcp_invoke` runs the site's real tool function in-page |
+| Consent | The site has no say in the call | The protocol requires site-side confirmation |
+| Drift | Breaks on markup changes | Follows the site's own declared contract |
+
+## Install
+
+```bash
+dsh plugin --profile web add github:T-Markus-Liang/dsh-webmcp
+```
+
+## Quick start
+
+The plugin registers two agent tools.
+
+```yaml
+# Discover the site tools a page exposes (agent tool-call; wrapper is illustrative)
+agent:
+  tool: webmcp_discover
+  input:
+    url: https://example.com
+```
+
+```yaml
+# Invoke a discovered site tool with arguments (args is optional)
+agent:
+  tool: webmcp_invoke
+  input:
+    url: https://example.com
+    tool: <name-from-discover>
+    args:
+      query: "Show the latest posts"
+```
+
+## Configuration
+
+All options are optional and are set under the `config` block in `cordis.patch.yml`.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `headless` | `true` | Run Chromium headless. |
+| `navigationTimeoutMs` | `30000` | Timeout for navigating to the page, in milliseconds. |
+| `invokeTimeoutMs` | `20000` | Timeout for a single tool invocation, in milliseconds. |
+| `chromiumPath` | `""` | Explicit path to a Chromium executable; overrides automatic resolution. |
+
+## Chromium resolution order
+
+When choosing a Chromium executable, the plugin tries, in order:
+
+1. `config.chromiumPath`
+2. Environment variable `DSH_WEBMCP_CHROMIUM`
+3. Playwright `ms-playwright` cache scan
+4. `channel: 'chrome'` (system Chrome)
+
+## HTTP status endpoint
+
+```http
+GET /webmcp/status
+```
+
+```json
+{
+  "plugin": "dsh-webmcp",
+  "version": "0.1.0",
+  "browser": { "launched": true },
+  "config": {}
+}
+```
+
+## Security
+
+- Site JavaScript runs only inside an isolated, one-time headless profile; no user login state is ever reused.
+- Tool invocation is explicitly initiated by the user through the agent — never silently in the background.
+- The WebMCP protocol itself requires site-side user confirmation, the same model ChatGPT's site tools follow.
+
+## Roadmap
+
+- **v0.2** — stdio MCP server gateway mode
+- **v0.3** — session reuse and CDP attach
+- **v0.4** — polyfill auto-injection
+- **dsh-browser** — interop with the dsh-browser harness
+
+## License
+
+MIT
