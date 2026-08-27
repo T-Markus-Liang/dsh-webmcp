@@ -17,6 +17,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [0.2.1] - 2026-08-27
+
+### Fixed
+- Tool discovery/invoke on polyfill & native mounts whose `tools` is a Map and
+  whose `getTools()` returns a Promise (Chrome 149 Origin-Trial shape) —
+  previously these pages discovered zero tools.
+- `findTool` async-scope regression introduced with the above (await inside a
+  sync arrow broke every invoke with a SyntaxError).
+
+### Added
+- `executeToolByName` dispatch channel: polyfill/native registry entries
+  without an inline function are now invokable.
+- `argsWarning` on invoke results when required args (per inputSchema) are
+  missing — no more silent empty-args calls.
+- `maxResultChars` result-size budget (default 12000) with truncated envelope
+  `{ truncated, totalBytes, preview, hint }`.
+
 ## [0.2.0] - 2026-08-27
 
 ### Added

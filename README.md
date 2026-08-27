@@ -50,7 +50,7 @@ agent:
       query: "Show the latest posts"
 ```
 
-Both tools accept an optional `refresh` (boolean) parameter: forces re-navigation.
+Both tools accept an optional `refresh` (boolean) parameter: forces re-navigation. Invocations may return an `argsWarning` field listing required args you omitted (per the tool's `inputSchema.required`).
 
 ## Configuration
 
@@ -64,8 +64,9 @@ All options are optional and are set under the `config` block in `cordis.patch.y
 | `chromiumPath` | `""` | Explicit path to a Chromium executable; overrides automatic resolution. |
 | `allowPrivateHosts` | `false` | When false (default), URLs targeting loopback/private networks (localhost, 127.0.0.0/8, 10/8, 172.16/12, 192.168/16, 169.254/16, ::1, fc00::/7, *.local, *.internal) are rejected — protects intranet from prompt-injected scans. Set true for local development fixtures. |
 | `sessionTtlMs` | `30000` | If a tool targets the exact URL navigated recently (within TTL), navigation is skipped and the live page is reused. Set 0 to always navigate. A `refresh: true` per-call override forces navigation. |
+| `maxResultChars` | `12000` | Tool results serialized above this size are truncated to a `{ truncated, totalBytes, preview, hint }` envelope — protects the agent's context window from huge outputs. |
 
-Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements.
+Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements. Since v0.2.1 it also understands polyfill/native storage shapes (Map-backed tool stores, promise-returning `getTools()`) and routes calls through the mount's own `executeToolByName` when a registered entry carries no inline function.
 
 ## Chromium resolution order
 

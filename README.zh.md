@@ -50,7 +50,7 @@ agent:
       query: "展示最新文章"
 ```
 
-两个工具均接受可选参数 `refresh`(boolean)：强制重新导航。
+两个工具均接受可选参数 `refresh`(boolean)：强制重新导航。 调用结果可能携带 `argsWarning` 字段，提示你遗漏了该工具 `inputSchema.required` 中的必填参数。
 
 ## 配置
 
@@ -64,8 +64,9 @@ agent:
 | `chromiumPath` | `""` | Chromium 可执行文件的显式路径；优先级高于自动解析。 |
 | `allowPrivateHosts` | `false` | 为 false（默认）时拒绝指向回环/私有网络的 URL（localhost、127/8、10/8、172.16/12、192.168/16、169.254/16、::1、fc00::/7、*.local、*.internal）——防止被提示注入诱导扫描内网。本地开发夹具请显式设 true。 |
 | `sessionTtlMs` | `30000` | 若工具目标 URL 与近期导航完全一致（TTL 内），跳过重复导航直接复用当前页面；设为 0 表示每次都导航。单次调用可传 `refresh: true` 强制刷新。 |
+| `maxResultChars` | `12000` | 工具结果序列化后超过该字节数时截断为 `{ truncated, totalBytes, preview, hint }` 信封——防止超大输出撑爆 agent 上下文。 |
 
-自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。
+自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。自 v0.2.1 起进一步兼容 polyfill/原生实现的存储形态（Map 工具表、返回 Promise 的 `getTools()`），并在注册项无内联函数时自动经挂载点自身的 `executeToolByName` 分发调用。
 
 ## Chromium 解析顺序
 

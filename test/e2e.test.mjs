@@ -53,15 +53,28 @@ test('webmcp e2e: discover + invoke on the fixture site', { timeout: 60_000, ski
     // discover()
     const disc = await discoverTool.execute({ url: site.url() })
     assert.equal(disc.ok, true, `discover not ok: ${JSON.stringify(disc)}`)
-    assert.ok(disc.count >= 4, `expected count>=4 (both modelContext mounts), got ${disc.count}`)
+    assert.ok(disc.count >= 5, `expected count>=5 (dual mounts + greet), got ${disc.count}`)
     const foundNames = (disc.tools || []).map((t) => t.name)
-    for (const name of ['echo', 'add', 'pageTitle', 'docTitle']) {
+    for (const name of ['echo', 'add', 'greet', 'pageTitle', 'docTitle']) {
       assert.ok(foundNames.includes(name), `missing discovered tool "${name}"`)
     }
     // The dual-mount guarantee (v0.1.1): docTitle must arrive specifically via
     // the document.modelContext surface, proving both mounts are probed.
     const docTitleRow = (disc.tools || []).find((t) => t.name === 'docTitle')
     assert.equal(docTitleRow && docTitleRow.surface, 'document.modelContext')
+
+    // v0.2.1: executeToolByName dispatch channel (docTitle has no inline execute)
+    const docInv = await invokeTool.execute({ url: site.url(), tool: 'docTitle' })
+    assert.equal(docInv.ok, true, `docTitle dispatch failed: ${JSON.stringify(docInv)}`)
+    assert.equal(docInv.result && docInv.result.title, 'WebMCP Fixture')
+
+    // v0.2.1: argsWarning on missing required args (greet requires name)
+    const greetMissing = await invokeTool.execute({ url: site.url(), tool: 'greet' })
+    assert.equal(greetMissing.ok, true)
+    assert.match(greetMissing.argsWarning, /missing required args: name/)
+    const greetOk = await invokeTool.execute({ url: site.url(), tool: 'greet', args: { name: 'neo' } })
+    assert.equal(greetOk.argsWarning, undefined)
+    assert.equal(greetOk.result.greeting, 'hi neo')
 
     // invoke('echo', {text:'ping'}) -> {echo:'ping'}
     const echo = await invokeTool.execute({ url: site.url(), tool: 'echo', args: { text: 'ping' } })

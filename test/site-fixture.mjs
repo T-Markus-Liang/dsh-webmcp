@@ -55,7 +55,13 @@ function homeHtml() {
           sum: Number(args && args.a != null ? args.a : 0) + Number(args && args.b != null ? args.b : 0),
         }),
       };
-      window.webmcp = { tools: [echo, add] };
+      const greet = {
+        name: 'greet',
+        description: 'Greet someone by name',
+        inputSchema: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
+        execute: async (args) => ({ greeting: 'hi ' + String(args && args.name != null ? args.name : '') }),
+      };
+      window.webmcp = { tools: [echo, add, greet] };
 
       const pageTitle = {
         name: 'pageTitle',
@@ -64,23 +70,39 @@ function homeHtml() {
         execute: async () => ({ title: document.title }),
       };
       if (!('modelContext' in navigator)) {
+        // Polyfill/native-style mount: Map store + promise getTools (v0.2.1
+        // coverage — the shape official impls actually use).
+        const mcTools = new Map([['pageTitle', pageTitle]]);
         Object.defineProperty(navigator, 'modelContext', {
-          value: { tools: [pageTitle] },
+          value: {
+            tools: mcTools,
+            getTools() { return Promise.resolve(Array.from(mcTools.values())); },
+          },
           configurable: true,
         });
       }
 
       // Second spec mount (v0.1.1): document.modelContext, mirroring the
       // official examples. A UNIQUE tool name proves both mounts are probed.
+      // docTitle carries NO inline execute: exercising the v0.2.1
+      // executeToolByName dispatch channel on a polyfill-style mount.
       const docTitle = {
         name: 'docTitle',
         description: 'Return document.title through the document.modelContext mount',
         inputSchema: { type: 'object', properties: {} },
-        execute: async () => ({ title: document.title }),
       };
       if (!('modelContext' in document)) {
+        const docTools = new Map([[docTitle.name, docTitle]]);
         Object.defineProperty(document, 'modelContext', {
-          value: { tools: [docTitle] },
+          value: {
+            tools: docTools,
+            getTools() { return Promise.resolve(Array.from(docTools.values())); },
+            executeToolByName(n, args) {
+              const t = docTools.get(n);
+              if (!t) return Promise.reject(new Error('unknown tool: ' + n));
+              return Promise.resolve({ title: document.title });
+            },
+          },
           configurable: true,
         });
       }
