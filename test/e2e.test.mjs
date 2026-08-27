@@ -51,11 +51,15 @@ test('webmcp e2e: discover + invoke on the fixture site', { timeout: 60_000, ski
     // discover()
     const disc = await discoverTool.execute({ url: site.url() })
     assert.equal(disc.ok, true, `discover not ok: ${JSON.stringify(disc)}`)
-    assert.ok(disc.count >= 3, `expected count>=3, got ${disc.count}`)
+    assert.ok(disc.count >= 4, `expected count>=4 (both modelContext mounts), got ${disc.count}`)
     const foundNames = (disc.tools || []).map((t) => t.name)
-    for (const name of ['echo', 'add', 'pageTitle']) {
+    for (const name of ['echo', 'add', 'pageTitle', 'docTitle']) {
       assert.ok(foundNames.includes(name), `missing discovered tool "${name}"`)
     }
+    // The dual-mount guarantee (v0.1.1): docTitle must arrive specifically via
+    // the document.modelContext surface, proving both mounts are probed.
+    const docTitleRow = (disc.tools || []).find((t) => t.name === 'docTitle')
+    assert.equal(docTitleRow && docTitleRow.surface, 'document.modelContext')
 
     // invoke('echo', {text:'ping'}) -> {echo:'ping'}
     const echo = await invokeTool.execute({ url: site.url(), tool: 'echo', args: { text: 'ping' } })

@@ -61,6 +61,8 @@ agent:
 | `invokeTimeoutMs` | `20000` | 单次工具调用超时时间（毫秒）。 |
 | `chromiumPath` | `""` | Chromium 可执行文件的显式路径；优先级高于自动解析。 |
 
+自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。
+
 ## Chromium 解析顺序
 
 选择 Chromium 可执行文件时，插件按以下顺序依次尝试：
@@ -84,6 +86,20 @@ GET /webmcp/status
   "config": {}
 }
 ```
+
+## 范围说明：与 W3C 提案的关系
+
+WebMCP 标准化进展迅速：**Chrome 149** 与 **Edge 150** 已通过 Origin Trial 上线实验支持，
+**ChatGPT 桌面版**原生支持站点工具，Brave（Leo AI）提供实验性集成。Firefox 与 Safari
+目前仅提交了标准立场议题。
+
+本插件可驱动本地任意 **Chromium 家族**二进制（见下方解析链），刻意不支持驱动
+Firefox 或 Safari。
+
+诚实定位：W3C 提案将“无头浏览”与“全自主代理”列为非目标——其愿景是在具备内建
+agent 的浏览器中实现人机协作。本插件是一个务实的过渡期桥接器与站点调试工具：
+让尚无内建 agent 的 Harness 立即触达已暴露 WebMCP 工具的站点。完整的人机协作
+体验，仍应期待并使用你浏览器未来的原生实现。
 
 ## 安全
 

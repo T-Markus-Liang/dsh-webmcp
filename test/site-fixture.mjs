@@ -69,6 +69,21 @@ function homeHtml() {
           configurable: true,
         });
       }
+
+      // Second spec mount (v0.1.1): document.modelContext, mirroring the
+      // official examples. A UNIQUE tool name proves both mounts are probed.
+      const docTitle = {
+        name: 'docTitle',
+        description: 'Return document.title through the document.modelContext mount',
+        inputSchema: { type: 'object', properties: {} },
+        execute: async () => ({ title: document.title }),
+      };
+      if (!('modelContext' in document)) {
+        Object.defineProperty(document, 'modelContext', {
+          value: { tools: [docTitle] },
+          configurable: true,
+        });
+      }
     })();
   </script>
 </body>

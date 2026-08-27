@@ -61,6 +61,8 @@ All options are optional and are set under the `config` block in `cordis.patch.y
 | `invokeTimeoutMs` | `20000` | Timeout for a single tool invocation, in milliseconds. |
 | `chromiumPath` | `""` | Explicit path to a Chromium executable; overrides automatic resolution. |
 
+Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements.
+
 ## Chromium resolution order
 
 When choosing a Chromium executable, the plugin tries, in order:
@@ -84,6 +86,24 @@ GET /webmcp/status
   "config": {}
 }
 ```
+
+## Scope & relationship to the W3C proposal
+
+WebMCP itself is standardizing fast: **Chrome 149** and **Edge 150** ship it behind an
+Origin Trial today, **ChatGPT Desktop** supports site tools natively, and Brave (Leo)
+ships an experimental integration. Firefox and Safari have only filed standards
+positions so far.
+
+This plugin drives any locally available **Chromium-family** binary (see the
+resolution chain below). It deliberately does **not** support driving Firefox or
+Safari.
+
+Honest positioning: the W3C proposal lists *headless browsing* and *fully
+autonomous agents* among its non-goals — its vision is human-in-the-loop use
+inside an agent-capable browser. This plugin is a pragmatic transition bridge
+and a site-debugging tool: it lets harnesses without such a built-in agent reach
+sites that already expose WebMCP tools today. For the full collaborative UX,
+prefer native implementations once your browser ships them.
 
 ## Security
 

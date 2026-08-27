@@ -11,6 +11,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Planned: gateway stdio mode …
 - Planned: session reuse & CDP attach …
 
+## [0.1.1] - 2026-08-27
+
+### Added
+- Tool discovery now probes both spec mounts: `navigator.modelContext` AND
+  `document.modelContext` (official examples mount there), on top of the
+  existing `window.webmcp` and html-form surfaces.
+- Launcher falls back across multiple local Chromium binaries/channels when
+  the first choice fails; `GET /webmcp/status` reports `browser.launchedWith`.
+- New "Scope & relationship to the W3C proposal" documentation section with
+  the live browser-support matrix.
+
+### Fixed
+- package.json test script: explicit file list (node --test directory args
+  break under Node v24).
+
 ## [0.1.0] - 2026-08-27
 
 ### Added
