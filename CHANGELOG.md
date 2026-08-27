@@ -11,6 +11,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Planned: gateway stdio mode …
 - Planned: session reuse & CDP attach …
 
+## [0.2.0] - 2026-08-27
+
+### Added
+- Private-network shield: loopback/private targets rejected unless
+  `allowPrivateHosts: true` — mitigates prompt-injected intranet scanning.
+- Same-URL session reuse inside `sessionTtlMs`; per-call `refresh: true`
+  override; navigation counters surfaced via `GET /webmcp/status`.
+### Changed
+- `webmcp_discover` / `webmcp_invoke` accept optional `refresh` boolean.
+
+### Security
+- Default-deny for private network targets (see allowPrivateHosts).
+
 ## [0.1.1] - 2026-08-27
 
 ### Added

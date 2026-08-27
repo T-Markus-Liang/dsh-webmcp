@@ -38,7 +38,9 @@ test('webmcp e2e: discover + invoke on the fixture site', { timeout: 60_000, ski
 
   const site = await startSite()
   try {
-    apply(mockCtx, {})
+    // The fixture serves loopback (127.0.0.1), so the v0.2 intranet shield
+    // MUST be explicitly relaxed for this harness.
+    apply(mockCtx, { allowPrivateHosts: true })
 
     // The two host tool descriptors were registered.
     const regNames = registered.map((t) => t.name).sort()
@@ -70,6 +72,16 @@ test('webmcp e2e: discover + invoke on the fixture site', { timeout: 60_000, ski
     const nope = await invokeTool.execute({ url: site.url(), tool: 'nope' })
     assert.equal(nope.error, 'unknown-tool')
     assert.equal(nope.ok, false)
+
+    // --- v0.2: same-URL session reuse ---------------------------------------
+    // The navigation above left lastHref === site.url() within the default
+    // 30s TTL, so an identical-URL discover must reuse the live page.
+    const reused = await discoverTool.execute({ url: site.url() })
+    assert.equal(reused.ok, true)
+    assert.equal(reused._meta.reused, true, 'expected same-URL session reuse')
+    const forced = await discoverTool.execute({ url: site.url(), refresh: true })
+    assert.equal(forced._meta.reused, false, 'refresh:true must force a real navigation')
+    assert.equal(typeof forced._meta.navigations, 'number')
   } finally {
     await stopSite()
     for (const d of disposers) {

@@ -50,6 +50,8 @@ agent:
       query: "Show the latest posts"
 ```
 
+Both tools accept an optional `refresh` (boolean) parameter: forces re-navigation.
+
 ## Configuration
 
 All options are optional and are set under the `config` block in `cordis.patch.yml`.
@@ -60,6 +62,8 @@ All options are optional and are set under the `config` block in `cordis.patch.y
 | `navigationTimeoutMs` | `30000` | Timeout for navigating to the page, in milliseconds. |
 | `invokeTimeoutMs` | `20000` | Timeout for a single tool invocation, in milliseconds. |
 | `chromiumPath` | `""` | Explicit path to a Chromium executable; overrides automatic resolution. |
+| `allowPrivateHosts` | `false` | When false (default), URLs targeting loopback/private networks (localhost, 127.0.0.0/8, 10/8, 172.16/12, 192.168/16, 169.254/16, ::1, fc00::/7, *.local, *.internal) are rejected — protects intranet from prompt-injected scans. Set true for local development fixtures. |
+| `sessionTtlMs` | `30000` | If a tool targets the exact URL navigated recently (within TTL), navigation is skipped and the live page is reused. Set 0 to always navigate. A `refresh: true` per-call override forces navigation. |
 
 Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements.
 
@@ -110,13 +114,14 @@ prefer native implementations once your browser ships them.
 - Site JavaScript runs only inside an isolated, one-time headless profile; no user login state is ever reused.
 - Tool invocation is explicitly initiated by the user through the agent — never silently in the background.
 - The WebMCP protocol itself requires site-side user confirmation, the same model ChatGPT's site tools follow.
+- Intranet shield — private-network targets are refused by default even if a prompt tricks the agent into pointing at them.
 
 ## Roadmap
 
-- **v0.2** — stdio MCP server gateway mode
-- **v0.3** — session reuse and CDP attach
-- **v0.4** — polyfill auto-injection
-- **dsh-browser** — interop with the dsh-browser harness
+- **v0.2** ✅ shipped — private-network shield (`allowPrivateHosts`) + same-URL session reuse
+- **v0.3** — stdio MCP server gateway mode
+- **v0.4** — CDP attach to your real logged-in browser (strictly opt-in)
+- **later** — polyfill auto-injection; dsh-browser interop
 
 ## License
 

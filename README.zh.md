@@ -50,6 +50,8 @@ agent:
       query: "展示最新文章"
 ```
 
+两个工具均接受可选参数 `refresh`(boolean)：强制重新导航。
+
 ## 配置
 
 所有配置项均可选，统一写在 `cordis.patch.yml` 的 `config` 块中。
@@ -60,6 +62,8 @@ agent:
 | `navigationTimeoutMs` | `30000` | 页面导航超时时间（毫秒）。 |
 | `invokeTimeoutMs` | `20000` | 单次工具调用超时时间（毫秒）。 |
 | `chromiumPath` | `""` | Chromium 可执行文件的显式路径；优先级高于自动解析。 |
+| `allowPrivateHosts` | `false` | 为 false（默认）时拒绝指向回环/私有网络的 URL（localhost、127/8、10/8、172.16/12、192.168/16、169.254/16、::1、fc00::/7、*.local、*.internal）——防止被提示注入诱导扫描内网。本地开发夹具请显式设 true。 |
+| `sessionTtlMs` | `30000` | 若工具目标 URL 与近期导航完全一致（TTL 内），跳过重复导航直接复用当前页面；设为 0 表示每次都导航。单次调用可传 `refresh: true` 强制刷新。 |
 
 自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。
 
@@ -106,13 +110,14 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 - 站点 JavaScript 只运行在隔离的一次性无头 profile 中，绝不复用用户任何登录态。
 - 工具调用由用户通过 agent 显式发起，绝不在后台静默执行。
 - WebMCP 协议本身就要求站点侧用户确认，ChatGPT 的站点工具正是如此。
+- 内网防护——即便提示注入诱导 agent 指向内网，默认也会拒绝该目标。
 
 ## 路线图
 
-- **v0.2** — stdio MCP server 网关模式
-- **v0.3** — 会话复用与 CDP 附着
-- **v0.4** — polyfill 自动注入
-- **dsh-browser** — 与 dsh-browser 互通
+- **v0.2** ✅ 已发布——内网防护（`allowPrivateHosts`）+ 同址会话复用
+- **v0.3** — stdio MCP server 网关模式
+- **v0.4** — CDP 附着真实已登录浏览器（严格可选）
+- **后续** — polyfill 自动注入；与 dsh-browser 互通
 
 ## License
 

@@ -124,3 +124,55 @@ test('default export: name is dsh-webmcp and apply is a function', () => {
   assert.equal(def.name, 'dsh-webmcp')
   assert.equal(typeof def.apply, 'function')
 })
+
+// ---------------------------------------------------------------------------
+// v0.2: private-network shield + session-reuse config
+// ---------------------------------------------------------------------------
+
+test('resolveConfig: allowPrivateHosts defaults to false and honors true', () => {
+  assert.equal(resolveConfig({}).allowPrivateHosts, false)
+  assert.equal(resolveConfig({ allowPrivateHosts: true }).allowPrivateHosts, true)
+})
+
+test('resolveConfig: sessionTtlMs default 30000, clamped to [0..600000]', () => {
+  assert.equal(resolveConfig({}).sessionTtlMs, 30_000)
+  assert.equal(resolveConfig({ sessionTtlMs: -1 }).sessionTtlMs, 0)
+  assert.equal(resolveConfig({ sessionTtlMs: 999_999 }).sessionTtlMs, 600_000)
+})
+
+test('isPrivateHostname: private / link-local / unique-local hit', async () => {
+  const { isPrivateHostname } = await import('../lib/index.js')
+  const hits = [
+    'localhost', 'LOCALHOST',
+    '127.0.0.1', '127.255.0.7',
+    '10.1.2.3',
+    '192.168.1.1',
+    '172.16.0.1', '172.31.255.255',
+    '169.254.9.9',
+    '[::1]',
+    '[fc00::1]', '[fd12:3456::a]',
+    'box.local', 'srv.INTERNAL',
+  ]
+  for (const host of hits) {
+    assert.equal(isPrivateHostname(host), true, `expected PRIVATE: ${host}`)
+  }
+})
+
+test('isPrivateHostname: public hosts pass through', async () => {
+  const { isPrivateHostname } = await import('../lib/index.js')
+  const misses = [
+    'example.com',
+    'api.deepseek.com',
+    '172.32.0.1', // outside 172.16/12
+    '172.15.255.255', // below the range
+    'sub.example.org',
+  ]
+  for (const host of misses) {
+    assert.equal(isPrivateHostname(host), false, `expected PUBLIC: ${host}`)
+  }
+})
+
+test('isPrivateHostname: empty hostname fails closed', async () => {
+  const { isPrivateHostname } = await import('../lib/index.js')
+  assert.equal(isPrivateHostname(''), true)
+})
