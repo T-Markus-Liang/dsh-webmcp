@@ -13,9 +13,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Planned
 
-- v0.3.0: stdio MCP server gateway mode
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
+
+## [0.3.0] - 2026-08-28
+
+### Added
+- stdio MCP gateway: `bin/dsh-webmcp-serve.mjs` exposes a site's WebMCP tools
+  to ANY MCP client (Claude Code/Desktop, Codex, …) — newline-delimited
+  JSON-RPC 2.0 with initialize/ping/tools/list/tools/call. Reuses the exact
+  BrowserSession pipeline behind the dsh plugin tools (dual-mount, Map/Promise
+  stores, executeToolByName dispatch, argsWarning, result budget all carried).
+- Manifest cache at ~/.dsh-webmcp/manifests/ (TTL 300s; --no-cache / --manifest-ttl-ms).
+- `createSession(config)` public export for embedders.
+- CLI flags: --allow-private-hosts (default-deny parity with the plugin).
 
 ## [0.2.2] - 2026-08-28
 

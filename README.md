@@ -27,6 +27,22 @@ WebMCP is a W3C Web Agents Community Group standardization proposal ([github.com
 dsh plugin --profile web add github:T-Markus-Liang/dsh-webmcp
 ```
 
+## MCP gateway (stdio)
+
+The plugin also ships `bin/dsh-webmcp-serve.mjs`, a stdio MCP gateway that bridges a site's WebMCP tools to ANY MCP client (Claude Code/Desktop, Codex, …). Point it at a URL and the site's tools become a local MCP server any MCP client can consume natively.
+
+```
+dsh-webmcp-serve <url> [--allow-private-hosts] [--manifest-ttl-ms N] [--no-cache]
+```
+
+Client config example:
+
+```json
+{ "mcpServers": { "my-site": { "command": "node", "args": ["/path/to/dsh-webmcp/bin/dsh-webmcp-serve.mjs", "https://example.com/app"] } } }
+```
+
+Protocol: newline-delimited JSON-RPC 2.0 (MCP stdio) implementing `initialize` / `ping` / `tools/list` / `tools/call`. `tools/list` comes from page discover (dual-mount / Map / Promise / `executeToolByName` fully compatible); `tools/call` reuses the same `BrowserSession` pipeline. Manifests are disk-cached under `~/.dsh-webmcp/manifests/` (default TTL 300s; `--no-cache` disables). Diagnostics go to stderr only — stdout is the pure MCP channel. Private-network targets are refused by default (plugin parity).
+
 ## Quick start
 
 The plugin registers two agent tools.
@@ -145,7 +161,7 @@ Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md
 | v0.2.0 | private-network shield + session reuse | ✅ shipped |
 | v0.2.1 | polyfill/native runtime compat + argsWarning + result budget | ✅ shipped |
 | v0.2.2 | page-agent engineering + DNS guard + error taxonomy | ✅ shipped |
-| v0.3.0 | stdio MCP server gateway mode | planned |
+| v0.3.0 | stdio MCP server gateway mode | ✅ shipped |
 | v0.4.0 | opt-in CDP attach to your real browser | planned |
 | later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |
 

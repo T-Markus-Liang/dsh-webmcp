@@ -176,3 +176,109 @@ test('isPrivateHostname: empty hostname fails closed', async () => {
   const { isPrivateHostname } = await import('../lib/index.js')
   assert.equal(isPrivateHostname(''), true)
 })
+
+// --- v0.3.0: stdio gateway protocol (no browser — mock session injection) ---
+
+async function withGateway(run) {
+  const { serve } = await import('../lib/gateway.mjs')
+  const { PassThrough } = await import('node:stream')
+  const { mkdtempSync } = await import('node:fs')
+  const { tmpdir } = await import('node:os')
+  const { join } = await import('node:path')
+  process.env.DSH_WEBMCP_MANIFEST_DIR = mkdtempSync(join(tmpdir(), 'dsh-webmcp-mf-'))
+  const input = new PassThrough()
+  const output = new PassThrough()
+  const calls = { discover: 0, invoke: 0 }
+  const mockSession = {
+    discover: async () => {
+      calls.discover += 1
+      return {
+        ok: true,
+        tools: [{ name: 'demo', description: 'demo tool', inputSchema: { type: 'object', properties: { x: { type: 'number' } } } }],
+      }
+    },
+    invoke: async (url, name, args) => {
+      calls.invoke += 1
+      return { ok: true, tool: name, result: { echoed: args } }
+    },
+    close: async () => {},
+  }
+  const uniqueUrl = 'https://example.test/app?r=' + Date.now() + '-' + Math.floor(Math.random() * 1e6)
+  const server = serve({ url: uniqueUrl, session: mockSession, input, output, manifestTtlMs: 60_000 })
+  const pending = new Map()
+  let buf = ''
+  output.on('data', (d) => {
+    buf += d.toString()
+    for (;;) {
+      const i = buf.indexOf('\n')
+      if (i === -1) break
+      const line = buf.slice(0, i).trim()
+      buf = buf.slice(i + 1)
+      if (!line) continue
+      const msg = JSON.parse(line)
+      if (msg.id !== undefined && pending.has(msg.id)) { pending.get(msg.id)(msg); pending.delete(msg.id) }
+      else if (msg.id === null && msg.error && pending.has('parse-error')) { pending.get('parse-error')(msg); pending.delete('parse-error') }
+    }
+  })
+  const rpc = (id, method, params) => new Promise((resolve) => {
+    pending.set(id, resolve)
+    input.write(JSON.stringify({ jsonrpc: '2.0', id, method, ...(params ? { params } : {}) }) + '\n')
+  })
+  try {
+    await run({ rpc, input, pending, calls })
+  } finally {
+    await server.close()
+  }
+}
+
+test('gateway: initialize + ping handshake', async () => {
+  await withGateway(async ({ rpc }) => {
+    const init = await rpc(1, 'initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'unit', version: '0' } })
+    assert.ok(init.result.serverInfo.name.includes('dsh-webmcp'))
+    assert.equal(init.result.protocolVersion, '2025-06-18')
+    assert.ok(init.result.capabilities.tools)
+    const ping = await rpc(2, 'ping')
+    assert.deepEqual(ping.result, {})
+  })
+})
+
+test('gateway: tools/list maps discovered tools (cached)', async () => {
+  await withGateway(async ({ rpc, calls }) => {
+    const first = await rpc(1, 'tools/list')
+    assert.equal(first.result.tools.length, 1)
+    assert.equal(first.result.tools[0].name, 'demo')
+    assert.equal(first.result.tools[0].inputSchema.properties.x.type, 'number')
+    const second = await rpc(2, 'tools/list')
+    assert.equal(second.result.tools.length, 1)
+    assert.equal(calls.discover, 1, 'second tools/list must hit the manifest cache')
+  })
+})
+
+test('gateway: tools/call round-trips into session.invoke', async () => {
+  await withGateway(async ({ rpc, calls }) => {
+    const res = await rpc(1, 'tools/call', { name: 'demo', arguments: { x: 42 } })
+    assert.equal(res.result.isError, false)
+    const payload = JSON.parse(res.result.content[0].text)
+    assert.equal(payload.ok, true)
+    assert.equal(payload.result.echoed.x, 42)
+    assert.equal(calls.invoke, 1)
+  })
+})
+
+test('gateway: malformed line gets -32700 parse error', async () => {
+  await withGateway(async ({ input, pending }) => {
+    const errMsg = await new Promise((resolve) => {
+      pending.set('parse-error', resolve)
+      input.write('{not json\n')
+    })
+    assert.equal(errMsg.error.code, -32700)
+    assert.equal(errMsg.id, null)
+  })
+})
+
+test('gateway: unknown method gets -32601', async () => {
+  await withGateway(async ({ rpc }) => {
+    const res = await rpc(9, 'resources/list')
+    assert.equal(res.error.code, -32601)
+  })
+})

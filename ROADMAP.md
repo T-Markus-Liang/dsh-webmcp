@@ -10,10 +10,10 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 
 | Dimension | Score | Basis |
 | --- | --- | --- |
-| Reliability | 4/10 | Real-site validation breadth is still 1 site. |
-| Engineering quality | 3/10 | Template-string injection is still present. |
-| Security | 5/10 | DNS rebinding is not yet defended. |
-| Ecosystem | 3/10 | No stdio gateway yet. |
+| Reliability | 5/10 | All four surfaces now have invoke-path e2e; real-site breadth still 1 site. |
+| Engineering quality | 6/10 | v0.2.2: in-page code is a real node --check-able file (page-agent.js). |
+| Security | 7/10 | v0.2.2: DNS-rebinding guard shipped; documented error taxonomy. |
+| Ecosystem | 6/10 | v0.3.0: stdio MCP gateway shipped — any MCP client can consume site tools. |
 | Performance | 3/10 | Single-page serial execution. |
 | Observability | 2/10 | Only navigation counts today. |
 | Developer experience | 5/10 | No settings card yet. |
@@ -25,6 +25,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v0.2.0` — private-network protection + session reuse
 - `v0.2.1` — polyfill / native `Map` + `Promise` + `executeToolByName` + `argsWarning` + result budget
 - `v0.2.2` — (in progress) page-agent engineering + form e2e + DNS protection + error classification
+- `v0.3.0` — stdio MCP gateway (fixture site: 5 tools `tools/list` + echo call roundtrip + unknown-tool isError)
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -34,7 +35,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 
 Acceptance: full suite green · `page-agent.js` passes a standalone `node --check` · error-code table lands in the README.
 
-## Phase 2 · v0.3.0 — stdio MCP gateway (step-change item)
+## Phase 2 · v0.3.0 — stdio MCP gateway (step-change item) ✅ shipped 2026-08-28
 
 WebMCP is fundamentally MCP's Web-ification; without bridging into the MCP ecosystem, we've only completed half the job.
 

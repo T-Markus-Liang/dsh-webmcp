@@ -27,6 +27,22 @@ WebMCP 是 W3C Web Agents 社区组的标准化提案（[github.com/webmachinele
 dsh plugin --profile web add github:T-Markus-Liang/dsh-webmcp
 ```
 
+## MCP 网关（stdio）
+
+插件同时提供 `bin/dsh-webmcp-serve.mjs`，这是一个 stdio MCP 网关，把某网站对外暴露的 WebMCP 工具桥接给任意 MCP 客户端（Claude Code/Desktop、Codex 等）。指向一个 URL，站点工具即变成任何 MCP 客户端都能原生消费的本地 MCP server。
+
+```
+dsh-webmcp-serve <url> [--allow-private-hosts] [--manifest-ttl-ms N] [--no-cache]
+```
+
+客户端配置示例：
+
+```json
+{ "mcpServers": { "my-site": { "command": "node", "args": ["/path/to/dsh-webmcp/bin/dsh-webmcp-serve.mjs", "https://example.com/app"] } } }
+```
+
+协议：换行分隔 JSON-RPC 2.0（MCP stdio），实现 `initialize` / `ping` / `tools/list` / `tools/call`。`tools/list` 来自页面 discover（双挂载 / Map / Promise / `executeToolByName` 全兼容）；`tools/call` 复用同一 `BrowserSession` 管线。Manifest 磁盘缓存于 `~/.dsh-webmcp/manifests/`（默认 TTL 300s；`--no-cache` 关闭）。诊断只走 stderr——stdout 是纯 MCP 通道。私网目标默认拒绝（与插件一致）。
+
 ## 快速开始
 
 该插件注册了 2 个 agent 工具。
@@ -138,7 +154,7 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 | v0.2.0 | 内网防护 + 会话复用 | ✅ 已发布 |
 | v0.2.1 | polyfill/原生运行时兼容 + argsWarning + 结果预算 | ✅ 已发布 |
 | v0.2.2 | page-agent 工程化 + DNS 防护 + 错误码矩阵 | ✅ 已发布 |
-| v0.3.0 | stdio MCP server 网关模式 | 计划中 |
+| v0.3.0 | stdio MCP server 网关模式 | ✅ 已发布 |
 | v0.4.0 | 可选 CDP 附着真实浏览器 | 计划中 |
 | 后续 | polyfill 自动注入、诊断包、dsh-browser 互通 | 探索中 |
 
