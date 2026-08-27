@@ -16,6 +16,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [0.5.1] - 2026-08-28
+
+### Fixed
+- /webmcp/status now actually includes the stats summary block (the v0.5.0
+  insertion landed in the dashboard handler which shares the same anchor line);
+  config echo also reports the trace flag.
+
 ## [0.5.0] - 2026-08-28
 
 ### Added
