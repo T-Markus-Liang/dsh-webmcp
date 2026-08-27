@@ -2,85 +2,80 @@
 
 > [中文](ROADMAP.zh.md)
 
-## Where we are
+Maturity target: engineering hardening through the v0.x line → a stable v1.0.
 
-| Tag | Theme | Status |
+## Maturity snapshot
+
+Ratings are grounded in empirical evidence gathered across the project's development history.
+
+| Dimension | Score | Basis |
 | --- | --- | --- |
-| `v0.1.0` | Discover + invoke site tools across four surfaces (navigator/document modelContext, window.webmcp, html-form) | ✅ shipped |
-| `v0.1.1` | Dual-mount probing hardening; Chromium launcher fallback chain | ✅ shipped |
-| `v0.2.0` | Private-network shield; same-URL session reuse; navigation stats | ✅ shipped |
+| Reliability | 4/10 | Real-site validation breadth is still 1 site. |
+| Engineering quality | 3/10 | Template-string injection is still present. |
+| Security | 5/10 | DNS rebinding is not yet defended. |
+| Ecosystem | 3/10 | No stdio gateway yet. |
+| Performance | 3/10 | Single-page serial execution. |
+| Observability | 2/10 | Only navigation counts today. |
+| Developer experience | 5/10 | No settings card yet. |
 
-Vision: **make any DeepSeek Harness agent fluent in websites that speak WebMCP** —
-first as a headless bridge, then as a gateway other MCP clients can ride, and
-eventually as a first-class citizen next to native browser implementations.
+## Shipped
 
----
+- `v0.1.0` — four tool-surface discovery + invocation
+- `v0.1.1` — dual-mount
+- `v0.2.0` — private-network protection + session reuse
+- `v0.2.1` — polyfill / native `Map` + `Promise` + `executeToolByName` + `argsWarning` + result budget
+- `v0.2.2` — (in progress) page-agent engineering + form e2e + DNS protection + error classification
 
-# English
+## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
-## Track A — Capability ladder
+- Real file-ification of `page-agent.js`.
+- First e2e coverage of HTML-form invocation.
+- DNS-rebinding protection + error-classification matrix (`bad-url` · `private-host-blocked` · `timeout` · `tool-threw` · `dns-failed` · `navigate-failed`).
 
-### v0.3.0 · stdio MCP server gateway
-Expose discovered site tools as a plain **MCP server over stdio**, so *any*
-MCP-speaking client can consume them.
+Acceptance: full suite green · `page-agent.js` passes a standalone `node --check` · error-code table lands in the README.
 
-```bash
-npx dsh-webmcp-serve https://example.com          # discovers, serves tools/list + tools/call
-```
+## Phase 2 · v0.3.0 — stdio MCP gateway (step-change item)
 
-- Hand-rolled JSON-RPC 2.0 framing (no SDK dependency kept).
-- Caches the last discovery result to disk under
-  `~/.dsh-webmcp/manifests/<host>.json` so repeated starts are instant.
-- Acceptance: `tools/list` returns the fixture's echo/add/pageTitle/docTitle
-  set; `tools/call` round-trips through the same page-realm invoker used by the
-  DSH tools; negative path returns JSON-RPC errors.
-- Risk: schema drift between page reloads → mitigate with startup re-scan and
-  `manifest-hash` mismatch error.
+WebMCP is fundamentally MCP's Web-ification; without bridging into the MCP ecosystem, we've only completed half the job.
 
-### v0.4.0 · opt-in CDP attach to your real browser
-Optionally attach to an already-running Chrome started with
-`--remote-debugging-port`, inheriting the user's live login state instead of a
-throwaway profile.
+Deliverables:
+- `bin/dsh-webmcp-serve.mjs` — JSON-RPC over stdio, `tools/list` ← discover, `tools/call` ← invoke.
+- Manifest cache under `~/.dsh-webmcp/manifests/` (TTL + ETag).
+- Drop-in example docs for any MCP client (Claude Code / Codex).
 
-- Strictly opt-in: `attachUrl: "http://127.0.0.1:9222"` in plugin config;
-  the private-network shield from v0.2 keeps protecting third-party targets.
-- Writes stay routed through the page's own WebMCP tools whenever possible —
-  the goal is session state, not free-form remote control.
-- Acceptance: fixture round-trip through attached Chrome; documentation of the
-  data-exposure model and what the harness can/cannot reach.
-- Risk: users may not grasp that their logged-in context is exposed → ship
-  with loud docs warnings, disabled-by-default, and a one-line status banner
-  in `/webmcp/status`.
+Acceptance: one-click Claude Desktop `mcp` config example · real-site roundtrip demo · gateway mode reuses the same `BrowserSession` pipeline.
 
-### v0.5.0 · resilience & diagnostics
-- Official **polyfill auto-injection**: pages authored against `webmcp-types`
-  work even before the user's Chromium ships native support.
-- Failure diagnostics bundle: on tool timeout/error optionally capture a
-  redacted console log + DOM-free trace dump for bug reports.
-- Per-tool wall-time telemetry surfaced in `/webmcp/status`.
+## Phase 3 · v0.4.0 — Concurrency & reclamation
 
-### v1.0.0 · stabilization gate
-Semver lock, conformance run against the W3C reference behavior set, security
-self-review document, perf budgets (navigation p95 ≤ 5 s on warm start),
-bilingual in-plugin settings parity.
+- `BrowserSessionPool` — per-host context, concurrency 3, LRU.
+- Auto-close idle contexts after 30 s.
+- Process-exit hook.
 
-## Track B — ecosystem & ops (continuous)
-- **Release automation**: tag → GitHub Release notes → npm publish workflow.
-- **Marketplace presence**: screenshots/GIF in README, category review, install
-  counter sanity checks after each release.
-- **Spec tracking**: watch `webmachinelearning/webmcp` releases and Chrome
-  Origin-Trial graduation; adapt mounts/surfaces within a minor cycle.
-- **CI depth**: real-browser e2e lane on Linux runners once Playwright browser
-  provisioning lands in the workflow (today macOS-local only).
+Acceptance: concurrent discovery of 3 URLs takes less than 1.5× the serial total.
 
-## Track C — hardening backlog
-- Per-site persisted allowlist/denylist layered on the v0.2 shield.
-- Result-size budgets (truncate huge tool outputs with a preview hash).
-- Structured debug-log hook behind an env flag.
+## Phase 4 · v0.5.0 — Observability
 
-## Non-goals (unchanged)
-Driving Firefox/Safari/WebKit · general-purpose UI scraping automation ·
-replacing backend MCP servers · silent autonomy over a user's logged-in
-profile without explicit opt-in.
+- JSONL trace to `~/.dsh-webmcp/trace/` — one line per `url` / `tool` / `duration_ms` / `outcome`.
+- Settings card (`dsh.client`) visualizing recent calls + p50/p95 + success rate.
+- Manifest drift detection — tool-list diff alert.
 
----
+## Phase 5 · v1.0.0 — Stabilization
+
+- Chrome Origin-Trial graduation tracking.
+- npm release (files allowlist already in place).
+- Security self-review document.
+- Bilingual docs finalized.
+
+## Track B — Ecosystem & ops (condensed)
+
+- Marketplace PR #3481 submitted, awaiting merge.
+- Challenge follow-up.
+- Real-site probe dataset.
+
+## Track C — Non-goals (unchanged)
+
+No account automation / captchas / credentials · no general-purpose scraping · no login-state injection — the security boundary stays fixed.
+
+## Principles
+
+Every release must ship with real-site validation evidence · data drives ordering · scale up incrementally, but each release is independently usable.

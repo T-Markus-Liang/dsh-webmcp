@@ -17,6 +17,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [0.2.2] - 2026-08-28
+
+### Changed
+- `lib/page-agent.js`: the in-page code is now a real standalone JavaScript
+  file (node --check-able, lintable) instead of template-string injection —
+  the string-embedding style caused brace-imbalance bugs during v0.2.1's
+  patch cycle. `page-snippet.js` is a thin loader. Zero behavior change
+  (19/19 real-browser e2e byte-equivalent before/after).
+
+### Added
+- DNS-rebinding guard: public-looking hostnames that RESOLVE to private
+  addresses are blocked too (same `private-host-blocked` code).
+- Documented error taxonomy; `err.code` now flows through `failOf`:
+  bad-url / private-host-blocked / dns-failed / network / timeout /
+  navigate-failed / unknown-tool / not-callable / tool-threw / internal.
+
+### Tested
+- HTML-form surface gains its first invoke-path assertions (discover exposes
+  the declarative form's inputSchema; invoke fills fields, submits, and reads
+  back `[data-webmcp-result]`).
+
 ## [0.2.1] - 2026-08-27
 
 ### Fixed

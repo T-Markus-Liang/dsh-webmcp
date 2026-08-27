@@ -1,6 +1,6 @@
 {
   "name": "dsh-webmcp",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "WebMCP bridge for DeepSeek Harness: let your agent discover and call tools that websites expose via the W3C WebMCP protocol (site tools), through a built-in headless browser.",
   "type": "module",
   "main": "./lib/index.js",

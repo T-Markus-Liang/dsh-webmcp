@@ -117,6 +117,25 @@ prefer native implementations once your browser ships them.
 - The WebMCP protocol itself requires site-side user confirmation, the same model ChatGPT's site tools follow.
 - Intranet shield — private-network targets are refused by default even if a prompt tricks the agent into pointing at them.
 
+## Error taxonomy
+
+Every tool result carries an `error` code on failure (and `argsWarning` on
+missing required args). Host-side codes come from the bridge itself:
+
+| code | meaning |
+| --- | --- |
+| `bad-url` | URL lacks an `http(s)://` scheme |
+| `private-host-blocked` | target is loopback/private/link-local — **or resolves to one** (DNS-rebinding guard, v0.2.2) |
+| `dns-failed` | hostname did not resolve |
+| `network` | connection refused/reset/unreachable |
+| `timeout` | navigation or evaluation exceeded its budget |
+| `navigate-failed` | other navigation failure |
+| `internal` | unexpected bridge failure |
+
+Page-side codes come from the injected agent: `unknown-tool` (no such tool on
+the page), `not-callable` (tool has no callable implementation), `tool-threw`
+(the tool itself threw — message and truncated stack included).
+
 ## Roadmap
 
 Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md).
@@ -124,6 +143,8 @@ Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md
 | Version | Theme | Status |
 | --- | --- | --- |
 | v0.2.0 | private-network shield + session reuse | ✅ shipped |
+| v0.2.1 | polyfill/native runtime compat + argsWarning + result budget | ✅ shipped |
+| v0.2.2 | page-agent engineering + DNS guard + error taxonomy | ✅ shipped |
 | v0.3.0 | stdio MCP server gateway mode | planned |
 | v0.4.0 | opt-in CDP attach to your real browser | planned |
 | later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |

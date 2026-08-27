@@ -95,6 +95,22 @@ test('webmcp e2e: discover + invoke on the fixture site', { timeout: 60_000, ski
     const forced = await discoverTool.execute({ url: site.url(), refresh: true })
     assert.equal(forced._meta.reused, false, 'refresh:true must force a real navigation')
     assert.equal(typeof forced._meta.navigations, 'number')
+
+    // --- v0.2.2: HTML-form surface — first invoke-path assertions ----------
+    // discover on /form-only must expose the declarative form as a tool.
+    const formDisc = await discoverTool.execute({ url: site.formUrl() })
+    assert.equal(formDisc.ok, true)
+    const lookupRow = (formDisc.tools || []).find((t) => t.name === 'lookup')
+    assert.ok(lookupRow, 'form-only page must expose tool "lookup"')
+    assert.equal(lookupRow.surface, 'html-form')
+    assert.ok(lookupRow.inputSchema && lookupRow.inputSchema.properties && lookupRow.inputSchema.properties.q,
+      'form tool must surface an inputSchema with field q')
+
+    // invoke fills field q, submits, and reads back [data-webmcp-result].
+    const formInv = await invokeTool.execute({ url: site.formUrl(), tool: 'lookup', args: { q: 'Acme' } })
+    assert.equal(formInv.ok, true, `form invoke failed: ${JSON.stringify(formInv)}`)
+    assert.equal(formInv.surface, 'html-form')
+    assert.equal(formInv.result, 'lookup:Acme', `unexpected form result: ${JSON.stringify(formInv.result)}`)
   } finally {
     await stopSite()
     for (const d of disposers) {
