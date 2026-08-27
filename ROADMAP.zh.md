@@ -24,7 +24,7 @@
 - `v0.1.1` —— 双挂载
 - `v0.2.0` —— 内网防护 + 会话复用
 - `v0.2.1` —— polyfill / 原生 `Map` + `Promise` + `executeToolByName` + `argsWarning` + 结果预算
-- `v0.2.2` ——（进行中）page-agent 工程化 + form e2e + DNS 防护 + 错误分类
+- `v0.2.2` —— page-agent 工程化 + form e2e + DNS 防护 + 错误分类
 - `v0.3.0` —— stdio MCP 网关（夹具站真机证据：5 工具 `tools/list` + echo 调用回环 + unknown-tool isError）
 - `v0.4.0` —— 按源会话池：并发、LRU 驱逐、空闲回收（池单测 9/9 + 双源并发 e2e）
 - `v0.5.0` —— 可观测：JSONL 追踪 + /webmcp/dashboard + manifest 漂移检测
@@ -70,9 +70,54 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 - 安全自查文档。
 - 双语文档定稿。
 
+## 市场现实（2026-08-28 调研）
+
+- 规范仍是 W3C 社区组草案、不在 Standard Track；仅 Chrome 149+ Origin Trial；**WebKit 正式反对**，Mozilla 中立；真实部署 ≈ 0。
+- **ChatGPT Desktop 站点工具已于 2026-08-26 上线**（自动发现、逐次确认、地址栏只读/变更指示）——首个大众级消费者。
+- 商用层正在把**就绪度与可观测**货币化（web-mcp.net 的就绪评分/测试服务 $49/月起）——我们的仪表盘是免费开源的对位答案。
+- 定位结论：WebMCP 是**渐进增强通道**而非唯一路径；MCP 保持为基线契约。
+
+## 与生态的差距分析（2026-08-28 调研）
+
+已对齐项：双挂载特性检测（CloudNSite 血泪第一课——我们 v0.1.1 起就做到）· 复用 MCP 词表的薄网关（Cloudflare 同款哲学）· 可观测层 · 无人文档化的安全加固（SSRF + DNS 反重绑定）。
+
+| 差距 | 来源 | 修复阶段 |
+| --- | --- | --- |
+| 工具 annotations（readOnly/destructive/idempotent/openWorld 提示）未透传 | MCP 2025-03-26 规范 | v1.1.0 |
+| 无 `/.well-known/` 探测（curl 可发现的自描述） | IETF 草案 + freeCodeCamp 实践 | v1.1.0 |
+| 漂移检测靠轮询；无 `tools/list_changed` 推送 | MCP 订阅模型 | v1.2.0 |
+| `outputSchema`/`structuredContent` 未透传 | MCP 2025-06-18 规范 | v1.2.0 |
+| 仪表盘只读；商用竞品在卖交互式就绪度测试 | web-mcp.net $49/月 | v1.2.0 |
+| 桥接 API 无 TS 类型契约 | @mcp-b/webmcp-types | v1.3.0 |
+| elicitation（input_required 往返）未评估 | MCP 2026-07-28 MRTR | v1.3.0（评估） |
+
+## Phase 6 · v1.1.0 —— agent 接口对齐
+
+- **annotations 透传**：discover 暴露每个工具的 `annotations`（readOnlyHint/destructiveHint/idempotentHint/openWorldHint）；网关映射进 `tools/list`。
+- **破坏性护栏**：调用标注 `destructiveHint`（或未标注按最坏假定）的工具必须显式 `confirm: true`，否则返回 `confirm-required` 及注解摘要。
+- **well-known 探测**：discover 增加第五面——`/.well-known/webmcp` 与 `/.well-known/mcp.json`（surface 记为 `'well-known'`）。
+
+验收：Persona 演示站工具可见 annotations · 破坏性护栏单测 + e2e · well-known 夹具路由探测通过。
+
+## Phase 7 · v1.2.0 —— 推送与就绪度
+
+- **list_changed 推送**：网关声明 `tools.listChanged: true`；manifest 漂移时主动发 `notifications/tools/list_changed`。
+- **outputSchema 透传**：discover 暴露 `outputSchema`；截断信封保留结构化字段、只裁人话文本。
+- **仪表盘就绪度视图**：按源就绪度指标（工具数、schema 完整度、注解覆盖率）+ 交互式调用测试器（商用扫描器收费的功能）。
+
+验收：漂移 → 网关 e2e 实时收到通知 · 仪表盘页面完成夹具站调用往返。
+
+## Phase 8 · v1.3.0 —— 契约与打磨
+
+- `dsh-webmcp-types` TS 契约包（discover 结果 / invoke 载荷 / 错误码）。
+- 对照真实网关客户端评估 elicitation（`resultType: "input_required"` + `requestState`）；确有客户端受益才实现。
+- npm 发布（待 registry 授权）、市场收录跟进。
+
 ## Track B —— 生态与运营（精简保留）
 
 - 市场 PR #3481 已提交待合并。
+- 竞品观察：mcp-b polyfill（月下载 179k）是事实参考实现——每月跟踪其 API 漂移。
+- 就绪度扫描器位：web-mcp.net 以 $49/月变现就绪度测试——v1.2.0 仪表盘就绪度视图是开源对位。
 - Chrome OT 毕业跟踪：每个 Chrome 稳定版里程碑复验双挂载探测；OT 结束后原生挂载成为默认路径
 - 挑战赛跟进。
 - 真实站点探测数据集。
