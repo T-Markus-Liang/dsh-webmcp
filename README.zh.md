@@ -83,6 +83,7 @@ agent:
 | `maxResultChars` | `12000` | 工具结果序列化后超过该字节数时截断为 `{ truncated, totalBytes, preview, hint }` 信封——防止超大输出撑爆 agent 上下文。 |
 | `maxSessions` | `3` | 按源（origin）划分的浏览器会话池上限；超出按 LRU 驱逐（1-8）。 |
 | `idleTtlMs` | `30000` | 空闲会话（及其浏览器）超时自动关闭；0 表示禁用回收。 |
+| `trace` | `true` | 调用追踪 JSONL 写入 `~/.dsh-webmcp/trace/`（按日轮转，失败静默）。设 false 关闭。 |
 
 自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。自 v0.2.1 起进一步兼容 polyfill/原生实现的存储形态（Map 工具表、返回 Promise 的 `getTools()`），并在注册项无内联函数时自动经挂载点自身的 `executeToolByName` 分发调用。
 
@@ -95,7 +96,7 @@ agent:
 3. Playwright `ms-playwright` 缓存扫描
 4. `channel: 'chrome'`（系统 Chrome）
 
-## HTTP 状态端点
+## HTTP 状态与仪表盘
 
 ```http
 GET /webmcp/status
@@ -109,6 +110,14 @@ GET /webmcp/status
   "config": {}
 }
 ```
+
+`GET /webmcp/dashboard` 提供每 5 秒自刷新的 HTML 观测页：
+配置摘要、池状态、聚合指标（调用数 / 成功率 / p50 / p95 / 均值）、最近 20 次调用、
+manifest 漂移事件。`/webmcp/status` 同步内嵌 `stats` 摘要。追踪按日写入
+`~/.dsh-webmcp/trace/YYYY-MM-DD.jsonl`（可用 `DSH_WEBMCP_TRACE_DIR` 覆盖）。
+
+**Manifest 漂移检测**：同一 URL 再次 discover 时若工具集合变化，结果携带
+`_meta.drift = { added, removed }`（按源内存基线），并写入 `manifest-drift` 追踪行。
 
 ## 范围说明：与 W3C 提案的关系
 
@@ -158,6 +167,7 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 | v0.2.2 | page-agent 工程化 + DNS 防护 + 错误码矩阵 | ✅ 已发布 |
 | v0.3.0 | stdio MCP server 网关模式 | ✅ 已发布 |
 | v0.4.0 | 按源会话池：并发 + LRU 驱逐 + 空闲回收 | ✅ 已发布 |
+| v0.5.0 | 可观测：JSONL 追踪 + 仪表盘 + manifest 漂移 | ✅ 已发布 |
 | 后续 | polyfill 自动注入、诊断包、dsh-browser 互通 | 探索中 |
 
 ## License

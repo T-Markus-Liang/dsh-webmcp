@@ -15,7 +15,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 | Security | 7/10 | v0.2.2: DNS-rebinding guard shipped; documented error taxonomy. |
 | Ecosystem | 6/10 | v0.3.0: stdio MCP gateway shipped — any MCP client can consume site tools. |
 | Performance | 6/10 | v0.4.0: per-origin pooled concurrency + idle reclamation. |
-| Observability | 2/10 | Only navigation counts today. |
+| Observability | 7/10 | v0.5.0: JSONL trace + live dashboard + drift detection. |
 | Developer experience | 5/10 | No settings card yet. |
 
 ## Shipped
@@ -27,6 +27,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v0.2.2` — (in progress) page-agent engineering + form e2e + DNS protection + error classification
 - `v0.3.0` — stdio MCP gateway (fixture site: 5 tools `tools/list` + echo call roundtrip + unknown-tool isError)
 - `v0.4.0` — per-origin session pool: concurrency, LRU eviction, idle reclamation (pool unit 9/9 + two-origin concurrent e2e)
+- `v0.5.0` — observability: JSONL trace + /webmcp/dashboard + manifest-drift detection
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -55,7 +56,7 @@ Acceptance: one-click Claude Desktop `mcp` config example · real-site roundtrip
 
 Acceptance: concurrent discovery of 3 URLs takes less than 1.5× the serial total.
 
-## Phase 4 · v0.5.0 — Observability
+## Phase 4 · v0.5.0 — Observability ✅ shipped 2026-08-28
 
 - JSONL trace to `~/.dsh-webmcp/trace/` — one line per `url` / `tool` / `duration_ms` / `outcome`.
 - Settings card (`dsh.client`) visualizing recent calls + p50/p95 + success rate.

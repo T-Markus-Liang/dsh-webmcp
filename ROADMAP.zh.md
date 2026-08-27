@@ -15,7 +15,7 @@
 | 安全 | 7/10 | v0.2.2：DNS 反重绑定守卫已发布；错误码矩阵已文档化。 |
 | 生态 | 6/10 | v0.3.0：stdio MCP 网关已发布——任意 MCP 客户端可消费站点工具。 |
 | 性能 | 6/10 | v0.4.0：按源池化并发 + 空闲回收。 |
-| 可观测 | 2/10 | 目前仅有 navigations 计数。 |
+| 可观测 | 7/10 | v0.5.0：JSONL 追踪 + 实时仪表盘 + 漂移检测。 |
 | 开发者体验 | 5/10 | 尚无设置卡片。 |
 
 ## 已发布
@@ -27,6 +27,7 @@
 - `v0.2.2` ——（进行中）page-agent 工程化 + form e2e + DNS 防护 + 错误分类
 - `v0.3.0` —— stdio MCP 网关（夹具站真机证据：5 工具 `tools/list` + echo 调用回环 + unknown-tool isError）
 - `v0.4.0` —— 按源会话池：并发、LRU 驱逐、空闲回收（池单测 9/9 + 双源并发 e2e）
+- `v0.5.0` —— 可观测：JSONL 追踪 + /webmcp/dashboard + manifest 漂移检测
 
 ## Phase 1 · v0.2.2 —— 工程硬化（本周）
 
@@ -55,7 +56,7 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 
 验收：3 个 URL 并发 discover 总耗时 < 串行 1.5×。
 
-## Phase 4 · v0.5.0 —— 可观测
+## Phase 4 · v0.5.0 —— 可观测 ✅ 已发布 2026-08-28
 
 - JSONL trace 到 `~/.dsh-webmcp/trace/` —— 每行 `url` / `tool` / `duration_ms` / `outcome`。
 - 设置卡片（`dsh.client`）可视化最近调用 + p50/p95 + 成功率。

@@ -16,6 +16,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [0.5.0] - 2026-08-28
+
+### Added
+- JSONL call tracing to ~/.dsh-webmcp/trace/YYYY-MM-DD.jsonl (daily rotation,
+  strictly best-effort; DSH_WEBMCP_TRACE_DIR override; config trace:false
+  disables).
+- /webmcp/dashboard: self-refreshing HTML observability page (config, pool
+  status, aggregate p50/p95/success-rate/avgMs, last 20 calls, drift events).
+  /webmcp/status gains a stats summary block.
+- Manifest drift detection: re-discovering a URL whose tool set changed
+  yields _meta.drift {added, removed} plus a manifest-drift trace line.
+
 ## [0.4.0] - 2026-08-28
 
 ### Added

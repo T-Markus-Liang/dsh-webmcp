@@ -83,6 +83,7 @@ All options are optional and are set under the `config` block in `cordis.patch.y
 | `maxResultChars` | `12000` | Tool results serialized above this size are truncated to a `{ truncated, totalBytes, preview, hint }` envelope — protects the agent's context window from huge outputs. |
 | `maxSessions` | `3` | Per-origin browser sessions, bounded pool. LRU eviction beyond capacity (1-8). |
 | `idleTtlMs` | `30000` | Idle sessions (their browsers) are closed after this; 0 disables reclamation. |
+| `trace` | `true` | JSONL call tracing to `~/.dsh-webmcp/trace/` (daily rotation, best-effort). Set false to disable. |
 
 Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements. Since v0.2.1 it also understands polyfill/native storage shapes (Map-backed tool stores, promise-returning `getTools()`) and routes calls through the mount's own `executeToolByName` when a registered entry carries no inline function.
 
@@ -95,7 +96,7 @@ When choosing a Chromium executable, the plugin tries, in order:
 3. Playwright `ms-playwright` cache scan
 4. `channel: 'chrome'` (system Chrome)
 
-## HTTP status endpoint
+## HTTP status & dashboard
 
 ```http
 GET /webmcp/status
@@ -109,6 +110,16 @@ GET /webmcp/status
   "config": {}
 }
 ```
+
+`GET /webmcp/dashboard` serves a self-refreshing (5s) HTML observability page:
+config summary, pool state, aggregate stats (count / success-rate / p50 / p95 / avg),
+the last 20 traced calls, and manifest-drift events. `/webmcp/status` now also embeds
+a `stats` block. Tracing appends one JSONL line per call to
+`~/.dsh-webmcp/trace/YYYY-MM-DD.jsonl` (override with `DSH_WEBMCP_TRACE_DIR`).
+
+**Manifest drift**: re-discovering a URL whose tool set changed yields
+`_meta.drift = { added, removed }` (in-memory per-origin baseline) plus a
+`manifest-drift` trace line.
 
 ## Scope & relationship to the W3C proposal
 
@@ -165,6 +176,7 @@ Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md
 | v0.2.2 | page-agent engineering + DNS guard + error taxonomy | ✅ shipped |
 | v0.3.0 | stdio MCP server gateway mode | ✅ shipped |
 | v0.4.0 | per-origin session pool: concurrency + LRU + idle reclamation | ✅ shipped |
+| v0.5.0 | observability: JSONL trace + dashboard + manifest drift | ✅ shipped |
 | later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |
 
 ## License
