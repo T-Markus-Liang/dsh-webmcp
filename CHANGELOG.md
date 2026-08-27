@@ -6,10 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Docs
+- Added long-form ROADMAP.md (capability ladder with acceptance criteria,
+  ecosystem/ops track, hardening backlog, bilingual). README roadmap sections
+  condensed to a status table linking into it.
+
 ### Planned
 
-- Planned: gateway stdio mode …
-- Planned: session reuse & CDP attach …
+- v0.3.0: stdio MCP server gateway mode
+- v0.4.0: opt-in CDP attach to the user's real browser
+- later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
 ## [0.2.0] - 2026-08-27
 

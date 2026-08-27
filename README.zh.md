@@ -114,10 +114,16 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 
 ## 路线图
 
-- **v0.2** ✅ 已发布——内网防护（`allowPrivateHosts`）+ 同址会话复用
-- **v0.3** — stdio MCP server 网关模式
-- **v0.4** — CDP 附着真实已登录浏览器（严格可选）
-- **后续** — polyfill 自动注入；与 dsh-browser 互通
+## 路线图
+
+此处为精简版；含验收标准的完整阶梯见 [ROADMAP.md](ROADMAP.md)。
+
+| 版本 | 主题 | 状态 |
+| --- | --- | --- |
+| v0.2.0 | 内网防护 + 会话复用 | ✅ 已发布 |
+| v0.3.0 | stdio MCP server 网关模式 | 计划中 |
+| v0.4.0 | 可选 CDP 附着真实浏览器 | 计划中 |
+| 后续 | polyfill 自动注入、诊断包、dsh-browser 互通 | 探索中 |
 
 ## License
 

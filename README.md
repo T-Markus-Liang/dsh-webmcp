@@ -118,10 +118,14 @@ prefer native implementations once your browser ships them.
 
 ## Roadmap
 
-- **v0.2** ✅ shipped — private-network shield (`allowPrivateHosts`) + same-URL session reuse
-- **v0.3** — stdio MCP server gateway mode
-- **v0.4** — CDP attach to your real logged-in browser (strictly opt-in)
-- **later** — polyfill auto-injection; dsh-browser interop
+Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md).
+
+| Version | Theme | Status |
+| --- | --- | --- |
+| v0.2.0 | private-network shield + session reuse | ✅ shipped |
+| v0.3.0 | stdio MCP server gateway mode | planned |
+| v0.4.0 | opt-in CDP attach to your real browser | planned |
+| later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |
 
 ## License
 
