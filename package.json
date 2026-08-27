@@ -50,5 +50,10 @@
     "doc": "docs",
     "lib": "lib",
     "test": "test"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   }
 }
