@@ -7,9 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Docs
-- Added long-form ROADMAP.md (capability ladder with acceptance criteria,
-  ecosystem/ops track, hardening backlog, bilingual). README roadmap sections
-  condensed to a status table linking into it.
+- Added ROADMAP.md (EN) / ROADMAP.zh.md (ZH): capability ladder with
+  acceptance criteria, ecosystem/ops track, hardening backlog. README
+  roadmap sections condensed to a status table linking into them.
 
 ### Planned
 
