@@ -17,8 +17,8 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "node --test test/",
-    "check": "node --check lib/index.js && node --check lib/page-snippet.js && node --test test/"
+    "test": "node --test test/unit.test.mjs test/e2e.test.mjs",
+    "check": "node --check lib/index.js && node --check lib/page-snippet.js && npm test"
   },
   "keywords": [
     "dsh",
