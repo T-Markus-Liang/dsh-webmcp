@@ -16,6 +16,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.0.0] - 2026-08-28
+
+Stabilization release. Capability surface is frozen from v0.2.2→v0.5.1; this
+release hardens the project around it.
+
+### Added
+- docs/security-review.md — full threat model, controls matrix with test
+  evidence pointers, honest residual risks, review cadence.
+- docs/real-sites.md — real-site WebMCP probing dataset (five sites probed
+  with our own pipeline; three coexisting exposure models documented).
+- Chrome Origin-Trial graduation watch (Track B): re-verify against each
+  Chrome stable milestone.
+
+### Notes
+- npm publish is the only Phase-5 item pending (registry auth required).
+- 46 tests: 23 unit + 11 trace + 9 pool + 3 real-browser e2e.
+
 ## [0.5.1] - 2026-08-28
 
 ### Fixed

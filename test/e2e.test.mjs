@@ -111,6 +111,15 @@ test('webmcp e2e: discover + invoke on the fixture site', { timeout: 60_000, ski
     assert.equal(formInv.ok, true, `form invoke failed: ${JSON.stringify(formInv)}`)
     assert.equal(formInv.surface, 'html-form')
     assert.equal(formInv.result, 'lookup:Acme', `unexpected form result: ${JSON.stringify(formInv.result)}`)
+
+    // v1.0.0: maxResultChars truncation envelope (closes the security-review
+    // Threat-3 evidence gap — oversized results must not reach the agent raw).
+    const big = await invokeTool.execute({ url: site.url(), tool: 'echo', args: { text: 'x'.repeat(20_000) } })
+    assert.equal(big.ok, true, `big echo failed: ${JSON.stringify(big).slice(0, 200)}`)
+    assert.equal(big.result.truncated, true, 'oversized result must be truncated')
+    assert.ok(big.result.totalBytes > 12_000, `totalBytes ${big.result.totalBytes} should exceed budget`)
+    assert.equal(big.result.preview.length, 12_000)
+    assert.ok(typeof big.result.hint === 'string' && big.result.hint.length > 0)
   } finally {
     await stopSite()
     for (const d of disposers) {

@@ -16,7 +16,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 | Ecosystem | 6/10 | v0.3.0: stdio MCP gateway shipped — any MCP client can consume site tools. |
 | Performance | 6/10 | v0.4.0: per-origin pooled concurrency + idle reclamation. |
 | Observability | 7/10 | v0.5.0: JSONL trace + live dashboard + drift detection. |
-| Developer experience | 5/10 | No settings card yet. |
+| Developer experience | 7/10 | v0.5.0 live dashboard + docs/real-sites dataset + security self-review; npm publish pending. |
 
 ## Shipped
 
@@ -28,6 +28,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v0.3.0` — stdio MCP gateway (fixture site: 5 tools `tools/list` + echo call roundtrip + unknown-tool isError)
 - `v0.4.0` — per-origin session pool: concurrency, LRU eviction, idle reclamation (pool unit 9/9 + two-origin concurrent e2e)
 - `v0.5.0` — observability: JSONL trace + /webmcp/dashboard + manifest-drift detection
+- `v1.0.0` — stabilization: security self-review, real-site dataset, OT watch (npm publish pending auth)
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -62,7 +63,7 @@ Acceptance: concurrent discovery of 3 URLs takes less than 1.5× the serial tota
 - Settings card (`dsh.client`) visualizing recent calls + p50/p95 + success rate.
 - Manifest drift detection — tool-list diff alert.
 
-## Phase 5 · v1.0.0 — Stabilization
+## Phase 5 · v1.0.0 — Stabilization ✅ shipped 2026-08-28 (npm publish pending registry auth)
 
 - Chrome Origin-Trial graduation tracking.
 - npm release (files allowlist already in place).
