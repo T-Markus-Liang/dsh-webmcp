@@ -81,6 +81,8 @@ agent:
 | `allowPrivateHosts` | `false` | 为 false（默认）时拒绝指向回环/私有网络的 URL（localhost、127/8、10/8、172.16/12、192.168/16、169.254/16、::1、fc00::/7、*.local、*.internal）——防止被提示注入诱导扫描内网。本地开发夹具请显式设 true。 |
 | `sessionTtlMs` | `30000` | 若工具目标 URL 与近期导航完全一致（TTL 内），跳过重复导航直接复用当前页面；设为 0 表示每次都导航。单次调用可传 `refresh: true` 强制刷新。 |
 | `maxResultChars` | `12000` | 工具结果序列化后超过该字节数时截断为 `{ truncated, totalBytes, preview, hint }` 信封——防止超大输出撑爆 agent 上下文。 |
+| `maxSessions` | `3` | 按源（origin）划分的浏览器会话池上限；超出按 LRU 驱逐（1-8）。 |
+| `idleTtlMs` | `30000` | 空闲会话（及其浏览器）超时自动关闭；0 表示禁用回收。 |
 
 自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。自 v0.2.1 起进一步兼容 polyfill/原生实现的存储形态（Map 工具表、返回 Promise 的 `getTools()`），并在注册项无内联函数时自动经挂载点自身的 `executeToolByName` 分发调用。
 
@@ -155,7 +157,7 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 | v0.2.1 | polyfill/原生运行时兼容 + argsWarning + 结果预算 | ✅ 已发布 |
 | v0.2.2 | page-agent 工程化 + DNS 防护 + 错误码矩阵 | ✅ 已发布 |
 | v0.3.0 | stdio MCP server 网关模式 | ✅ 已发布 |
-| v0.4.0 | 可选 CDP 附着真实浏览器 | 计划中 |
+| v0.4.0 | 按源会话池：并发 + LRU 驱逐 + 空闲回收 | ✅ 已发布 |
 | 后续 | polyfill 自动注入、诊断包、dsh-browser 互通 | 探索中 |
 
 ## License

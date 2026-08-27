@@ -14,7 +14,7 @@
 | 工程质量 | 6/10 | v0.2.2：页内代码已落地为可 node --check 的独立文件（page-agent.js）。 |
 | 安全 | 7/10 | v0.2.2：DNS 反重绑定守卫已发布；错误码矩阵已文档化。 |
 | 生态 | 6/10 | v0.3.0：stdio MCP 网关已发布——任意 MCP 客户端可消费站点工具。 |
-| 性能 | 3/10 | 单页串行执行。 |
+| 性能 | 6/10 | v0.4.0：按源池化并发 + 空闲回收。 |
 | 可观测 | 2/10 | 目前仅有 navigations 计数。 |
 | 开发者体验 | 5/10 | 尚无设置卡片。 |
 
@@ -26,6 +26,7 @@
 - `v0.2.1` —— polyfill / 原生 `Map` + `Promise` + `executeToolByName` + `argsWarning` + 结果预算
 - `v0.2.2` ——（进行中）page-agent 工程化 + form e2e + DNS 防护 + 错误分类
 - `v0.3.0` —— stdio MCP 网关（夹具站真机证据：5 工具 `tools/list` + echo 调用回环 + unknown-tool isError）
+- `v0.4.0` —— 按源会话池：并发、LRU 驱逐、空闲回收（池单测 9/9 + 双源并发 e2e）
 
 ## Phase 1 · v0.2.2 —— 工程硬化（本周）
 
@@ -46,7 +47,7 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 
 验收：Claude Desktop `mcp` 配置一键接入示例 · 真实站点 roundtrip 演示 · 网关模式复用同一 `BrowserSession` 管线。
 
-## Phase 3 · v0.4.0 —— 并发与回收
+## Phase 3 · v0.4.0 —— 并发与回收 ✅ 已发布 2026-08-28
 
 - `BrowserSessionPool` —— 每 host 独立 context、并发 3、LRU。
 - idle 30s 自动关闭 context。

@@ -16,6 +16,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [0.4.0] - 2026-08-28
+
+### Added
+- BrowserSessionPool: per-origin sessions with bounded capacity
+  (maxSessions, default 3), LRU eviction, and idle reclamation
+  (idleTtlMs, default 30s, 0 disables; unref'd timers never block exit).
+  Concurrent work across different sites now runs in parallel.
+- /webmcp/status reports pool status (size, per-origin hosts, pool stats).
+- Design tradeoff documented: one browser process per session buys full
+  per-site storage isolation; capacity bounds the resource cost.
+
+### Changed
+- apply() internals: single shared session → origin-sharded pool.
+  Same-origin TTL reuse semantics unchanged.
+
 ## [0.3.0] - 2026-08-28
 
 ### Added

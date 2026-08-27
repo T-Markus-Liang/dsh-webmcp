@@ -14,7 +14,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 | Engineering quality | 6/10 | v0.2.2: in-page code is a real node --check-able file (page-agent.js). |
 | Security | 7/10 | v0.2.2: DNS-rebinding guard shipped; documented error taxonomy. |
 | Ecosystem | 6/10 | v0.3.0: stdio MCP gateway shipped — any MCP client can consume site tools. |
-| Performance | 3/10 | Single-page serial execution. |
+| Performance | 6/10 | v0.4.0: per-origin pooled concurrency + idle reclamation. |
 | Observability | 2/10 | Only navigation counts today. |
 | Developer experience | 5/10 | No settings card yet. |
 
@@ -26,6 +26,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v0.2.1` — polyfill / native `Map` + `Promise` + `executeToolByName` + `argsWarning` + result budget
 - `v0.2.2` — (in progress) page-agent engineering + form e2e + DNS protection + error classification
 - `v0.3.0` — stdio MCP gateway (fixture site: 5 tools `tools/list` + echo call roundtrip + unknown-tool isError)
+- `v0.4.0` — per-origin session pool: concurrency, LRU eviction, idle reclamation (pool unit 9/9 + two-origin concurrent e2e)
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -46,7 +47,7 @@ Deliverables:
 
 Acceptance: one-click Claude Desktop `mcp` config example · real-site roundtrip demo · gateway mode reuses the same `BrowserSession` pipeline.
 
-## Phase 3 · v0.4.0 — Concurrency & reclamation
+## Phase 3 · v0.4.0 — Concurrency & reclamation ✅ shipped 2026-08-28
 
 - `BrowserSessionPool` — per-host context, concurrency 3, LRU.
 - Auto-close idle contexts after 30 s.

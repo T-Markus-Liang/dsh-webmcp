@@ -81,6 +81,8 @@ All options are optional and are set under the `config` block in `cordis.patch.y
 | `allowPrivateHosts` | `false` | When false (default), URLs targeting loopback/private networks (localhost, 127.0.0.0/8, 10/8, 172.16/12, 192.168/16, 169.254/16, ::1, fc00::/7, *.local, *.internal) are rejected — protects intranet from prompt-injected scans. Set true for local development fixtures. |
 | `sessionTtlMs` | `30000` | If a tool targets the exact URL navigated recently (within TTL), navigation is skipped and the live page is reused. Set 0 to always navigate. A `refresh: true` per-call override forces navigation. |
 | `maxResultChars` | `12000` | Tool results serialized above this size are truncated to a `{ truncated, totalBytes, preview, hint }` envelope — protects the agent's context window from huge outputs. |
+| `maxSessions` | `3` | Per-origin browser sessions, bounded pool. LRU eviction beyond capacity (1-8). |
+| `idleTtlMs` | `30000` | Idle sessions (their browsers) are closed after this; 0 disables reclamation. |
 
 Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements. Since v0.2.1 it also understands polyfill/native storage shapes (Map-backed tool stores, promise-returning `getTools()`) and routes calls through the mount's own `executeToolByName` when a registered entry carries no inline function.
 
@@ -162,7 +164,7 @@ Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md
 | v0.2.1 | polyfill/native runtime compat + argsWarning + result budget | ✅ shipped |
 | v0.2.2 | page-agent engineering + DNS guard + error taxonomy | ✅ shipped |
 | v0.3.0 | stdio MCP server gateway mode | ✅ shipped |
-| v0.4.0 | opt-in CDP attach to your real browser | planned |
+| v0.4.0 | per-origin session pool: concurrency + LRU + idle reclamation | ✅ shipped |
 | later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |
 
 ## License
