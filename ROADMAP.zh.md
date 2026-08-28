@@ -33,6 +33,7 @@
 - `v1.2.0` —— 推送（tools/list_changed）+ outputSchema 透传 + 仪表盘就绪度与测试器
 - `v1.3.0` —— 契约与打磨：`types/index.d.ts` TS 契约包、elicitation 评估（暂缓）、npm 发布待授权
 - `v1.4.0` —— 网关 HTTP/SSE 传输 + bearer 认证 + 多客户端
+- `v1.5.0` —— 站点侧接入套件 + 就绪度审计 CLI（sitekit/webmcp-register.js + dsh-webmcp-serve --check）
 
 ## Phase 1 · v0.2.2 —— 工程硬化（本周）
 
@@ -124,7 +125,7 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 
 验收：两个远程 MCP 客户端经同一网关并发驱动同一站点；无 token 请求被拒。
 
-## Phase 10 · v1.5.0 —— 站点侧接入套件（生态最大缺口）
+## Phase 10 · v1.5.0 —— 站点侧接入套件（生态最大缺口）✅ 已发布 2026-08-28
 
 - 面向站点作者的最小 `registerTool` 嵌入片段：双挂载特性检测（document + navigator）、不支持浏览器零副作用、鼓励注解、origin-trial meta 指引。
 - `dsh-webmcp-serve --check <url>` 就绪度审计 CLI（基于 lib/readiness.mjs）——开源的「agent 就绪度扫描器」。

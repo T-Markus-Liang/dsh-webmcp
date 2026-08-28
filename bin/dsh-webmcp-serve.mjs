@@ -15,6 +15,8 @@
  *   }
  */
 import { serve, serveHttp } from '../lib/gateway.mjs'
+import { createSession } from '../lib/index.js'
+import { computeReadiness } from '../lib/readiness.mjs'
 
 const argv = process.argv.slice(2)
 const usage = () => {
@@ -37,6 +39,24 @@ let manifestTtlMs = 300_000
 const ttlIdx = argv.indexOf('--manifest-ttl-ms')
 if (ttlIdx !== -1 && argv[ttlIdx + 1]) manifestTtlMs = Number(argv[ttlIdx + 1]) || manifestTtlMs
 if (argv.includes('--no-cache')) manifestTtlMs = 0
+
+// --check <url>: agent-readiness audit (v1.5.0). Prints a report; exit 0 if
+// score >= 60, 2 if discover fails, 1 if the site is below readiness.
+if (argv.includes('--check')) {
+  const sess = createSession(config)
+  try {
+    const disc = await sess.discover(url)
+    if (!disc.ok) {
+      console.error(`[dsh-webmcp-serve --check] discover failed: ${disc.error} — ${disc.message || ''}`)
+      process.exit(2)
+    }
+    const r = computeReadiness(disc.tools)
+    console.log(JSON.stringify({ url, ok: true, title: disc.title, tools: disc.tools.length, ...r }, null, 2))
+    process.exit(r.score != null && r.score >= 60 ? 0 : 1)
+  } finally {
+    await sess.close()
+  }
+}
 
 let server
 if (httpMode) {

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dsh-webmcp demo — a site that exposes tools to agents</title>
+<style>
+  body { font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; max-width: 720px; margin: 40px auto;
+         padding: 0 20px; color: #e6edf3; background: #0d1117; }
+  h1 { font-size: 22px; }
+  code { background: #161b22; padding: 1px 6px; border-radius: 4px; }
+  .badge { color: #3fb950; }
+  input, textarea { background: #161b22; border: 1px solid #21262d; color: #e6edf3; padding: 8px 10px;
+                    border-radius: 6px; font: 14px ui-monospace, monospace; width: 100%; }
+  button { background: #238636; border: 0; color: #fff; padding: 9px 16px; border-radius: 6px; cursor: pointer; }
+  form { display: grid; gap: 10px; max-width: 420px; margin: 10px 0; }
+  pre { background: #161b22; padding: 12px; border-radius: 8px; overflow: auto; }
+</style>
+</head>
+<body>
+<h1>dsh-webmcp demo <span class="badge">agent-ready</span></h1>
+<p>This page exposes real WebMCP tools to browsing agents (via the in-page
+sitekit snippet + a declarative form). Discover it with
+<code>dsh-webmcp-serve --check https://t-markus-liang.github.io/dsh-webmcp/demo/</code>
+or <code>webmcp_discover(url)</code> in a dsh session.</p>
+
+<h2>Declarative form tool</h2>
+<form data-webmcp-tool="submit_contact_request" data-webmcp-description="Submit a contact request">
+  <label>Name <input name="name" type="text" required></label>
+  <label>Message <textarea name="message" required></textarea></label>
+  <button type="submit">Submit</button>
+</form>
+<p>registers a <code>submit_contact_request</code> (destructiveHint) tool — the
+simplest way to expose a real action.</p>
+
+<h2>JS-registered read-only tool</h2>
+<p>Open the console, or connect an agent, and call
+<code>get_catalog_info</code> (readOnlyHint) via the modelContext mount.</p>
+
+<h2>Try it</h2>
+<pre>dsh-webmcp-serve --check https://t-markus-liang.github.io/dsh-webmcp/demo/</pre>
+
+<script src="../sitekit/webmcp-register.js"></script>
+<script>
+  // Declarative form → real endpoint: mirror the submit into a tool result.
+  const form = document.querySelector('form[data-webmcp-tool="submit_contact_request"]');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = form.elements.namedItem('name').value;
+    const message = form.elements.namedItem('message').value;
+    // Persist nowhere; just acknowledge back to the page so the bridge sees a result.
+    window.__submitted = { name, message, at: new Date().toISOString() };
+    alert('submitted (demo): ' + name);
+  });
+
+  // A read-only tool via the sitekit snippet. Fallback to window.webmcp registry
+  // when the browser has no native modelContext — the bridge discovers both.
+  if (window.WebMCP && window.WebMCP.register) {
+    window.WebMCP.register({
+      name: 'get_catalog_info',
+      description: 'Return the demo catalog summary (count + featured).',
+      inputSchema: { type: 'object', properties: {} },
+      outputSchema: { type: 'object', properties: { count: { type: 'number' } } },
+      annotations: { readOnlyHint: true, destructiveHint: false },
+      execute: async () => ({ count: 3, featured: ['trail shoe', 'bottle', 'jacket'], at: new Date().toISOString() }),
+    });
+  }
+</script>
+</body>
+</html>

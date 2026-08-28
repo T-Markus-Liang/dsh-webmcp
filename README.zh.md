@@ -43,7 +43,7 @@ dsh-webmcp-serve <url> [--allow-private-hosts] [--manifest-ttl-ms N] [--no-cache
 
 协议：换行分隔 JSON-RPC 2.0（MCP stdio），实现 `initialize` / `ping` / `tools/list` / `tools/call`。`tools/list` 来自页面 discover（双挂载 / Map / Promise / `executeToolByName` 全兼容）；`tools/call` 复用同一 `BrowserSession` 管线。Manifest 磁盘缓存于 `~/.dsh-webmcp/manifests/`（默认 TTL 300s；`--no-cache` 关闭）。诊断只走 stderr——stdout 是纯 MCP 通道。私网目标默认拒绝（与插件一致）。
 
-Server-Sent Events）用于 server→client 通知（如 `tools/list_changed`）。启用：
+网关还提供 HTTP 传输（Streamable-HTTP 风格）：`POST /mcp` 承载请求/响应，`GET /sse`（Server-Sent Events）用于 server→client 通知（如 `tools/list_changed`）。启用：
 
 ```
 dsh-webmcp-serve <url> --http --host 0.0.0.0 --port 9000 --token <secret>
@@ -55,6 +55,40 @@ POST `/mcp` 承载请求/响应 JSON-RPC；GET `/sse` 为事件流。Bearer 认�
 { "mcpServers": { "my-site": { "type": "http", "url": "http://host:9000/mcp",
     "headers": { "Authorization": "Bearer <secret>" } } } }
 ```
+
+## 站点侧接入套件
+
+站点不必等浏览器到位即可向 agent 暴露动作。插件内置零依赖嵌入片段（`sitekit/webmcp-register.js`），站点作者只需一行 `<script src>` 引入，再通过 `WebMCP.register(...)` 即可声明一个工具。
+
+```html
+<script src="https://cdn.example.com/webmcp-register.js"></script>
+<script>
+  WebMCP.register({
+    name: 'search_products',            // 必填、唯一
+    description: 'Search the catalog',  // 人话可读、面向 agent
+    inputSchema: { type: 'object', properties: { q: { type: 'string' } }, required: ['q'] },
+    outputSchema: { type: 'object', properties: { count: { type: 'number' } } },
+    annotations: { readOnlyHint: true },  // MCP ToolAnnotations
+    execute: async (args) => ({ count: queryYourDb(args.q) }),
+  });
+</script>
+```
+
+该片段被刻意设计得安全且诚实：
+- **双挂载特性检测**——同时探测 `document.modelContext` 与 `navigator.modelContext`。两处的挂载位置在 Chrome 各版本间漂移过，只测一个会静默失败（CloudNSite 的教训）。
+- **MCP 最坏假定注解归一**——`destructiveHint` 默认 `true`（`openWorldHint` 同理），除非作者显式设为 `false`，从而让 v1.1.0 宿主侧确认护栏总是拿到保守、可信的值。
+- **零副作用 no-op**——不支持 WebMCP 的浏览器直接返回 `false`，什么都不改。
+- **`window.webmcp` 回退**——无 modelContext 时把工具 push 进桥接器也会探测的 `window.webmcp` 注册表；Chrome 151+ 的 `Promise<void>` `registerTool` 已被 await，幂等守卫避免重复注册。
+
+### Agent 就绪度审计
+
+`dsh-webmcp-serve --check <url>` 对站点执行 discover + `computeReadiness`，输出报告：`url`、`title`、工具数、schema 完整度、注解覆盖率，以及 `readOnly` / `destructive` 计数（`score = 100 × (0.6 × schema + 0.4 × annotations)`）。
+
+```bash
+dsh-webmcp-serve --check https://ai-sdk-webmcp.persona-chat.dev
+```
+
+退出码：`score >= 60`（agent 就绪）返回 `0`，低于 60 返回 `1`，discover 失败返回 `2`。
 
 ## 快速开始
 

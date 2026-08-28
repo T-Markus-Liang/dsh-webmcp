@@ -33,6 +33,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v1.2.0` — push (tools/list_changed) + outputSchema passthrough + dashboard readiness & tester
 - `v1.3.0` — contracts & polish: `types/index.d.ts` TS contract package, elicitation evaluated (deferred), npm publish pending auth
 - `v1.4.0` — gateway HTTP/SSE transport + bearer auth + multi-client
+- `v1.5.0` — site-side authoring kit + readiness-audit CLI (sitekit/webmcp-register.js + dsh-webmcp-serve --check)
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -124,7 +125,7 @@ Acceptance: drift → live notification in gateway e2e · tester round-trip on f
 
 Acceptance: two remote MCP clients drive the same site concurrently via one gateway process; token-less requests rejected.
 
-## Phase 10 · v1.5.0 — Site-side authoring kit (the ecosystem's biggest gap)
+## Phase 10 · v1.5.0 — Site-side authoring kit (the ecosystem's biggest gap) ✅ shipped 2026-08-28
 
 - Minimal embeddable `registerTool` snippet for site authors: dual-mount feature-detect (document + navigator), no-op on unsupported browsers, annotations-encouraged, origin-trial meta guidance.
 - `dsh-webmcp-serve --check <url>` readiness-audit CLI on top of lib/readiness.mjs — the open "agent-readiness scanner".

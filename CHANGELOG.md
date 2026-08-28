@@ -16,6 +16,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.5.0] - 2026-08-28
+
+### Added
+- sitekit/webmcp-register.js — zero-dependency embeddable snippet for site
+  authors to expose actions to agents via WebMCP.register(...): dual-mount
+  feature-detect (document + navigator), MCP worst-case annotation defaults,
+  silent no-op on unsupported browsers, window.webmcp fallback.
+- dsh-webmcp-serve --check <url> — agent-readiness audit CLI (discover +
+  computeReadiness; exit 0 if score>=60, 1 below, 2 on discover failure).
+
 ## [1.4.0] - 2026-08-28
 
 ### Added

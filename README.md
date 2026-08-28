@@ -43,7 +43,7 @@ Client config example:
 
 Protocol: newline-delimited JSON-RPC 2.0 (MCP stdio) implementing `initialize` / `ping` / `tools/list` / `tools/call`. `tools/list` comes from page discover (dual-mount / Map / Promise / `executeToolByName` fully compatible); `tools/call` reuses the same `BrowserSession` pipeline. Manifests are disk-cached under `~/.dsh-webmcp/manifests/` (default TTL 300s; `--no-cache` disables). Diagnostics go to stderr only — stdout is the pure MCP channel. Private-network targets are refused by default (plugin parity).
 
-Server-Sent Events) for server→client notifications such as `tools/list_changed`. Enable with:
+The gateway also serves an HTTP transport (Streamable-HTTP style): `POST /mcp` for request/response and `GET /sse` (Server-Sent Events) for server→client notifications such as `tools/list_changed`. Enable with:
 
 ```
 dsh-webmcp-serve <url> --http --host 0.0.0.0 --port 9000 --token <secret>
@@ -58,6 +58,40 @@ live SSE subscriber. A streamable-http MCP client config:
 { "mcpServers": { "my-site": { "type": "http", "url": "http://host:9000/mcp",
     "headers": { "Authorization": "Bearer <secret>" } } } }
 ```
+
+## Site-side authoring kit
+
+Sites don't have to wait for a browser to expose actions to agents. The plugin ships a **zero-dependency embeddable snippet** (`sitekit/webmcp-register.js`) so a site author can declare a tool directly on the page with one `<script src>` include, then expose it via `WebMCP.register(...)`.
+
+```html
+<script src="https://cdn.example.com/webmcp-register.js"></script>
+<script>
+  WebMCP.register({
+    name: 'search_products',            // required, unique
+    description: 'Search the catalog',  // human-readable, agent-facing
+    inputSchema: { type: 'object', properties: { q: { type: 'string' } }, required: ['q'] },
+    outputSchema: { type: 'object', properties: { count: { type: 'number' } } },
+    annotations: { readOnlyHint: true },  // MCP ToolAnnotations
+    execute: async (args) => ({ count: queryYourDb(args.q) }),
+  });
+</script>
+```
+
+The snippet is designed to be safe and honest:
+- **Dual-mount feature-detection** — it probes BOTH `document.modelContext` and `navigator.modelContext`. The mount position shifted between Chrome builds, so checking only one silently fails (the CloudNSite lesson).
+- **MCP worst-case annotation normalization** — `destructiveHint` defaults to `true` (and `openWorldHint` to `true`) unless the author explicitly opts out, so the v1.1.0 host-side confirm guard always sees a conservative, truthful value.
+- **Zero-side-effect no-op** — on browsers with no WebMCP support it returns `false` and changes nothing.
+- **`window.webmcp` fallback** — when no `modelContext` is present the tool is pushed to a `window.webmcp` registry that the bridge probes; Chrome 151+'s `Promise<void>` `registerTool` is awaited, and an idempotent guard prevents double registration.
+
+### Agent-readiness audit
+
+`dsh-webmcp-serve --check <url>` runs discover + `computeReadiness` against a site and prints a report: `url`, `title`, tool count, schema completeness, annotation coverage, and `readOnly` / `destructive` counts (`score = 100 × (0.6 × schema + 0.4 × annotations)`).
+
+```bash
+dsh-webmcp-serve --check https://ai-sdk-webmcp.persona-chat.dev
+```
+
+Exit codes: `0` when `score >= 60` (agent-ready), `1` below, `2` when discover fails.
 
 ## Quick start
 
