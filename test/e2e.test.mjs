@@ -53,15 +53,33 @@ test('webmcp e2e: discover + invoke on the fixture site', { timeout: 60_000, ski
     // discover()
     const disc = await discoverTool.execute({ url: site.url() })
     assert.equal(disc.ok, true, `discover not ok: ${JSON.stringify(disc)}`)
-    assert.ok(disc.count >= 5, `expected count>=5 (dual mounts + greet), got ${disc.count}`)
+    assert.ok(disc.count >= 7, `expected count>=7 (dual mounts + greet + destructive + well-known), got ${disc.count}`)
     const foundNames = (disc.tools || []).map((t) => t.name)
-    for (const name of ['echo', 'add', 'greet', 'pageTitle', 'docTitle']) {
+    for (const name of ['echo', 'add', 'greet', 'pageTitle', 'docTitle', 'delete_account', 'wellKnownEcho']) {
       assert.ok(foundNames.includes(name), `missing discovered tool "${name}"`)
     }
     // The dual-mount guarantee (v0.1.1): docTitle must arrive specifically via
     // the document.modelContext surface, proving both mounts are probed.
     const docTitleRow = (disc.tools || []).find((t) => t.name === 'docTitle')
     assert.equal(docTitleRow && docTitleRow.surface, 'document.modelContext')
+
+    // v1.1.0: annotations passthrough + well-known surface + destructive guard
+    const delRow = (disc.tools || []).find((t) => t.name === 'delete_account')
+    assert.equal(delRow && delRow.annotations && delRow.annotations.destructiveHint, true, 'delete_account must carry destructiveHint')
+    const wkRow = (disc.tools || []).find((t) => t.name === 'wellKnownEcho')
+    assert.equal(wkRow && wkRow.surface, 'well-known', 'well-known endpoint must be probed as fifth surface')
+    assert.equal(wkRow && wkRow.annotations && wkRow.annotations.readOnlyHint, true)
+
+    const delNoConfirm = await invokeTool.execute({ url: site.url(), tool: 'delete_account' })
+    assert.equal(delNoConfirm.ok, false)
+    assert.equal(delNoConfirm.error, 'confirm-required', `expected confirm-required, got ${JSON.stringify(delNoConfirm)}`)
+    assert.equal(delNoConfirm.annotations && delNoConfirm.annotations.destructiveHint, true)
+    const delConfirmed = await invokeTool.execute({ url: site.url(), tool: 'delete_account', confirm: true })
+    assert.equal(delConfirmed.ok, true, `confirmed destructive call failed: ${JSON.stringify(delConfirmed)}`)
+    assert.equal(delConfirmed.result && delConfirmed.result.deleted, true)
+    // read-only tool needs no confirm even without annotations knowledge
+    const echoNoConfirm = await invokeTool.execute({ url: site.url(), tool: 'echo', args: { text: 'safe' } })
+    assert.equal(echoNoConfirm.ok, true)
 
     // v0.2.1: executeToolByName dispatch channel (docTitle has no inline execute)
     const docInv = await invokeTool.execute({ url: site.url(), tool: 'docTitle' })

@@ -66,7 +66,7 @@ agent:
       query: "展示最新文章"
 ```
 
-两个工具均接受可选参数 `refresh`(boolean)：强制重新导航。 调用结果可能携带 `argsWarning` 字段，提示你遗漏了该工具 `inputSchema.required` 中的必填参数。
+两个工具均接受可选参数 `refresh`(boolean)：强制重新导航。 调用结果可能携带 `argsWarning` 字段，提示你遗漏了该工具 `inputSchema.required` 中的必填参数。`webmcp_invoke` 还接受 `confirm`（boolean）：破坏性工具确认闸——annotations.destructiveHint 为 true 时必须显式传 true（宿主侧强制，页面不可绕过）。
 
 ## 配置
 
@@ -85,7 +85,7 @@ agent:
 | `idleTtlMs` | `30000` | 空闲会话（及其浏览器）超时自动关闭；0 表示禁用回收。 |
 | `trace` | `true` | 调用追踪 JSONL 写入 `~/.dsh-webmcp/trace/`（按日轮转，失败静默）。设 false 关闭。 |
 
-自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。自 v0.2.1 起进一步兼容 polyfill/原生实现的存储形态（Map 工具表、返回 Promise 的 `getTools()`），并在注册项无内联函数时自动经挂载点自身的 `executeToolByName` 分发调用。
+自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。自 v0.2.1 起进一步兼容 polyfill/原生实现的存储形态（Map 工具表、返回 Promise 的 `getTools()`），并在注册项无内联函数时自动经挂载点自身的 `executeToolByName` 分发调用。自 v1.1.0 起，discover 还会额外探测 `/.well-known/webmcp` 与 `/.well-known/mcp.json`（surface 记为 `well-known`），且每个工具条目都携带其 MCP `annotations`。
 
 ## Chromium 解析顺序
 
@@ -153,6 +153,7 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 | `timeout` | 导航或页面求值超出预算 |
 | `navigate-failed` | 其他导航失败 |
 | `internal` | 桥接器自身异常 |
+| `confirm-required` | 工具被标注 destructiveHint:true——需带 confirm:true 重新调用 |
 
 页面侧错误码来自注入 agent：`unknown-tool`（页面无此工具）、`not-callable`（工具无可调用实现）、`tool-threw`（工具自身抛错，附消息与截断堆栈）。
 
@@ -168,6 +169,7 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 | v0.3.0 | stdio MCP server 网关模式 | ✅ 已发布 |
 | v0.4.0 | 按源会话池：并发 + LRU 驱逐 + 空闲回收 | ✅ 已发布 |
 | v0.5.0 | 可观测：JSONL 追踪 + 仪表盘 + manifest 漂移 | ✅ 已发布 |
+| v1.1.0 | annotations 透传 + 破坏性护栏 + well-known 探测 | ✅ 已发布 |
 | 后续 | polyfill 自动注入、诊断包、dsh-browser 互通 | 探索中 |
 
 ## License

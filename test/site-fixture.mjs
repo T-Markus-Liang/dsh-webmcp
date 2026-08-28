@@ -61,7 +61,14 @@ function homeHtml() {
         inputSchema: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
         execute: async (args) => ({ greeting: 'hi ' + String(args && args.name != null ? args.name : '') }),
       };
-      window.webmcp = { tools: [echo, add, greet] };
+      const deleteAccount = {
+        name: 'delete_account',
+        description: 'Delete the current account (destructive)',
+        inputSchema: { type: 'object', properties: {} },
+        annotations: { destructiveHint: true, readOnlyHint: false },
+        execute: async () => ({ deleted: true }),
+      };
+      window.webmcp = { tools: [echo, add, greet, deleteAccount] };
 
       const pageTitle = {
         name: 'pageTitle',
@@ -168,6 +175,20 @@ export function startSite(port = 0) {
       pathname = new URL(req.url, 'http://127.0.0.1').pathname
     } catch {
       pathname = '/'
+    }
+
+    if (pathname === '/.well-known/webmcp') {
+      res.setHeader('content-type', 'application/json; charset=utf-8')
+      res.end(JSON.stringify({
+        version: 1,
+        tools: [{
+          name: 'wellKnownEcho',
+          description: 'Declared via /.well-known/webmcp',
+          inputSchema: { type: 'object', properties: { msg: { type: 'string' } } },
+          annotations: { readOnlyHint: true, destructiveHint: false },
+        }],
+      }))
+      return
     }
 
     if (pathname === '/' || pathname === '/index.html') {

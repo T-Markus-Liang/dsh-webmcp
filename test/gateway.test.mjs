@@ -157,8 +157,11 @@ test('webmcp gateway stdio: frozen protocol contract', { timeout: 120_000, skip:
     const tools = list.result.tools
     assert.ok(Array.isArray(tools), 'result.tools must be an array')
     const names = tools.map((t) => t.name).sort()
-    assert.deepEqual(names, ['add', 'docTitle', 'echo', 'greet', 'pageTitle'],
-      'tools/list must expose exactly the 5 fixture tools')
+    // v1.1.0: annotations mapped into tools/list
+    const delTool = tools.find((t) => t.name === 'delete_account')
+    assert.ok(delTool, 'tools/list must include delete_account')
+    assert.equal(delTool.annotations && delTool.annotations.destructiveHint, true, 'annotations must pass through to MCP tools/list')
+    assert.deepEqual(names, ['add', 'delete_account', 'docTitle', 'echo', 'greet', 'pageTitle', 'wellKnownEcho'], 'tools/list must expose exactly the 7 fixture tools (incl. destructive + well-known)')
     for (const t of tools) {
       assert.ok(typeof t.name === 'string' && t.name, `tool missing name: ${JSON.stringify(t)}`)
       assert.ok(typeof t.description === 'string', `tool ${t.name} missing description`)
@@ -173,6 +176,13 @@ test('webmcp gateway stdio: frozen protocol contract', { timeout: 120_000, skip:
     assert.equal(echoPayload.result.echo, 'mcp-smoke')
 
     // ---- 4. tools/call unknown tool --------------------------------------
+    const delBlocked = await gw.request('tools/call', { name: 'delete_account', arguments: {} })
+    assert.equal(delBlocked.result.isError, true)
+    assert.equal(JSON.parse(delBlocked.result.content[0].text).error, 'confirm-required')
+    const delOk = await gw.request('tools/call', { name: 'delete_account', arguments: {}, _meta: { confirm: true } })
+    assert.equal(delOk.result.isError, false)
+    assert.equal(JSON.parse(delOk.result.content[0].text).result.deleted, true)
+
     const nope = await gw.request('tools/call', { name: 'nope', arguments: {} })
     assert.equal(nope.result.isError, true, 'unknown tool must be flagged as an error')
     const nopePayload = JSON.parse(nope.result.content[0].text)

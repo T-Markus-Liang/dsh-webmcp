@@ -16,6 +16,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.1.0] - 2026-08-28
+
+### Added
+- Tool annotations passthrough (readOnlyHint/destructiveHint/idempotentHint/
+  openWorldHint) across discover results and gateway tools/list.
+- Host-side destructive guard: tools annotated destructiveHint:true require
+  explicit confirm:true (invoke param; gateway: _meta.confirm) — otherwise
+  confirm-required. Enforced against the per-URL discovery baseline, so page
+  JS cannot bypass it.
+- Well-known probing: discover additionally checks /.well-known/webmcp and
+  /.well-known/mcp.json as a fifth surface (declaration-only).
+- Error taxonomy: confirm-required.
+
 ## [1.0.0] - 2026-08-28
 
 Stabilization release. Capability surface is frozen from v0.2.2→v0.5.1; this

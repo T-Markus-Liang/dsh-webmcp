@@ -29,6 +29,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v0.4.0` — per-origin session pool: concurrency, LRU eviction, idle reclamation (pool unit 9/9 + two-origin concurrent e2e)
 - `v0.5.0` — observability: JSONL trace + /webmcp/dashboard + manifest-drift detection
 - `v1.0.0` — stabilization: security self-review, real-site dataset, OT watch (npm publish pending auth)
+- `v1.1.0` — agent-interface alignment: annotations passthrough + destructive guard + well-known probing
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -91,7 +92,7 @@ Already aligned: dual-mount feature-detect (CloudNSite's #1 hard-won lesson — 
 | No TS type contracts for the bridge API | @mcp-b/webmcp-types | v1.3.0 |
 | Elicitation (input_required round-trip) unevaluated | MCP 2026-07-28 MRTR | v1.3.0 (evaluate) |
 
-## Phase 6 · v1.1.0 — Agent-interface alignment
+## Phase 6 · v1.1.0 — Agent-interface alignment ✅ shipped 2026-08-28
 
 - **Annotations passthrough**: discover surfaces each tool's `annotations` (readOnlyHint/destructiveHint/idempotentHint/openWorldHint); gateway maps them into `tools/list`.
 - **Destructive guard**: invoking a tool annotated `destructiveHint` (or unannotated, worst-case default) requires explicit `confirm: true`; otherwise returns `confirm-required` with the annotation summary.

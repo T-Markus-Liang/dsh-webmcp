@@ -66,7 +66,7 @@ agent:
       query: "Show the latest posts"
 ```
 
-Both tools accept an optional `refresh` (boolean) parameter: forces re-navigation. Invocations may return an `argsWarning` field listing required args you omitted (per the tool's `inputSchema.required`).
+Both tools accept an optional `refresh` (boolean) parameter: forces re-navigation. Invocations may return an `argsWarning` field listing required args you omitted (per the tool's `inputSchema.required`). `webmcp_invoke` also accepts `confirm` (boolean): required `true` when the tool is annotated destructiveHint (host-side guard; re-invoke after reviewing the annotation).
 
 ## Configuration
 
@@ -85,7 +85,7 @@ All options are optional and are set under the `config` block in `cordis.patch.y
 | `idleTtlMs` | `30000` | Idle sessions (their browsers) are closed after this; 0 disables reclamation. |
 | `trace` | `true` | JSONL call tracing to `~/.dsh-webmcp/trace/` (daily rotation, best-effort). Set false to disable. |
 
-Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements. Since v0.2.1 it also understands polyfill/native storage shapes (Map-backed tool stores, promise-returning `getTools()`) and routes calls through the mount's own `executeToolByName` when a registered entry carries no inline function.
+Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements. Since v0.2.1 it also understands polyfill/native storage shapes (Map-backed tool stores, promise-returning `getTools()`) and routes calls through the mount's own `executeToolByName` when a registered entry carries no inline function. Since v1.1.0 discovery also probes `/.well-known/webmcp` and `/.well-known/mcp.json` (surface `well-known`), and every tool entry carries its MCP `annotations`.
 
 ## Chromium resolution order
 
@@ -160,6 +160,7 @@ missing required args). Host-side codes come from the bridge itself:
 | `timeout` | navigation or evaluation exceeded its budget |
 | `navigate-failed` | other navigation failure |
 | `internal` | unexpected bridge failure |
+| `confirm-required` | tool is annotated destructiveHint:true — re-invoke with confirm:true |
 
 Page-side codes come from the injected agent: `unknown-tool` (no such tool on
 the page), `not-callable` (tool has no callable implementation), `tool-threw`
@@ -177,6 +178,7 @@ Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md
 | v0.3.0 | stdio MCP server gateway mode | ✅ shipped |
 | v0.4.0 | per-origin session pool: concurrency + LRU + idle reclamation | ✅ shipped |
 | v0.5.0 | observability: JSONL trace + dashboard + manifest drift | ✅ shipped |
+| v1.1.0 | annotations passthrough + destructive guard + well-known probing | ✅ shipped |
 | later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |
 
 ## License

@@ -29,6 +29,7 @@
 - `v0.4.0` —— 按源会话池：并发、LRU 驱逐、空闲回收（池单测 9/9 + 双源并发 e2e）
 - `v0.5.0` —— 可观测：JSONL 追踪 + /webmcp/dashboard + manifest 漂移检测
 - `v1.0.0` —— 稳定化：安全自查、真实站点数据集、OT 跟踪（npm 发布待授权）
+- `v1.1.0` —— agent 接口对齐：annotations 透传 + 破坏性护栏 + well-known 探测
 
 ## Phase 1 · v0.2.2 —— 工程硬化（本周）
 
@@ -91,7 +92,7 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 | 桥接 API 无 TS 类型契约 | @mcp-b/webmcp-types | v1.3.0 |
 | elicitation（input_required 往返）未评估 | MCP 2026-07-28 MRTR | v1.3.0（评估） |
 
-## Phase 6 · v1.1.0 —— agent 接口对齐
+## Phase 6 · v1.1.0 —— agent 接口对齐 ✅ 已发布 2026-08-28
 
 - **annotations 透传**：discover 暴露每个工具的 `annotations`（readOnlyHint/destructiveHint/idempotentHint/openWorldHint）；网关映射进 `tools/list`。
 - **破坏性护栏**：调用标注 `destructiveHint`（或未标注按最坏假定）的工具必须显式 `confirm: true`，否则返回 `confirm-required` 及注解摘要。
