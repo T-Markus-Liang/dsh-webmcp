@@ -70,7 +70,6 @@ export interface DiscoverMeta {
   navigations: number
   reused: boolean
   drift?: { added: string[]; removed: string[] }
-  annotations?: ToolAnnotations
 }
 
 export interface DiscoverSuccess {
@@ -200,5 +199,18 @@ export function createSession(config?: BridgeConfigInput): {
   status(): SessionStatus
   readiness(): DiscoveredTool[]
 }
+declare const _default: {
+  name: 'dsh-webmcp'
+  version: string
+  apply: typeof apply
+  resolveConfig: typeof resolveConfig
+  findChromium: typeof findChromium
+  isPrivateHostname: typeof isPrivateHostname
+  createSession: typeof createSession
+  computeReadiness: typeof computeReadiness
+  aggregateReadiness: typeof aggregateReadiness
+}
+export default _default
+
 export function computeReadiness(tools: DiscoveredTool[]): ReadinessResult
 export function aggregateReadiness(perOrigin: Record<string, DiscoveredTool[]>): AggregateReadiness

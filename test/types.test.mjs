@@ -44,5 +44,5 @@ test('types: package.json wires types + exports to the d.ts', () => {
 })
 
 test('types: version aligns with the package', () => {
-  assert.equal(pkg.version, '1.3.0')
+  assert.equal(pkg.version, '1.3.1')
 })

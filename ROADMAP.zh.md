@@ -116,9 +116,32 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 - 对照真实网关客户端评估 elicitation（`resultType: "input_required"` + `requestState`）；确有客户端受益才实现。—— 评估结论：暂缓（见 CHANGELOG 1.3.0）。
 - npm 发布（待 registry 授权）、市场收录跟进。
 
+## Phase 9 · v1.4.0 —— 网关传输与远程化
+
+- 网关增加 HTTP/SSE 传输（当前仅 stdio）→ 一个网关进程经局域网/tailscale 服务多个 MCP 客户端；远程暴露可选 bearer token。
+- 在既有按源分片池之上支持多客户端并发。
+
+验收：两个远程 MCP 客户端经同一网关并发驱动同一站点；无 token 请求被拒。
+
+## Phase 10 · v1.5.0 —— 站点侧接入套件（生态最大缺口）
+
+- 面向站点作者的最小 `registerTool` 嵌入片段：双挂载特性检测（document + navigator）、不支持浏览器零副作用、鼓励注解、origin-trial meta 指引。
+- `dsh-webmcp-serve --check <url>` 就绪度审计 CLI（基于 lib/readiness.mjs）——开源的「agent 就绪度扫描器」。
+- 官方演示站（GitHub Pages）暴露真实带注解工具——自狗粮 + 给所有 WebMCP 客户端一个永久可发现的目标。
+
+验收：首次接入的站点作者仅凭该套件在 10 分钟内完成从 0 到可发现、注解完整的工具。
+
+## Phase 11 · v1.6.0 —— 策略分层与规范跟踪
+
+- 注解策略配置（`policy: { readOnly:'auto', destructive:'confirm', unknown:'ask' }`），叠加在 v1.1.0 护栏之上。
+- 声明式 API 跟踪（webmachinelearning/webmcp #22 explainer）：规范落地声明式属性时扩展 html-form 面。
+- Chrome OT 毕业：原生挂载进稳定版时更新双挂载优先级与文档。
+- 网关客户端文档化 input_required 支持时重新评估 elicitation。
+
 ## Track B —— 生态与运营（精简保留）
 
 - 市场 PR #3481 已提交待合并。
+- 年龄闸门：仓库满 1 天后重触 Submission gate（上次检查：仅剩年龄规则）。
 - 竞品观察：mcp-b polyfill（月下载 179k）是事实参考实现——每月跟踪其 API 漂移。
 - 就绪度扫描器位：web-mcp.net 以 $49/月变现就绪度测试——v1.2.0 仪表盘就绪度视图是开源对位。
 - Chrome OT 毕业跟踪：每个 Chrome 稳定版里程碑复验双挂载探测；OT 结束后原生挂载成为默认路径

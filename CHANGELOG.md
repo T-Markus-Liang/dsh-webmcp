@@ -16,7 +16,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.3.1] - 2026-08-28
+
+### Fixed (independent review of the v1.3.0 push)
+- CHANGELOG language purity + missing `### Fixed` block for the audit items.
+- types/index.d.ts: added the missing `export default` declaration (runtime
+  default object now also carries computeReadiness/aggregateReadiness);
+  removed the over-declared `DiscoverMeta.annotations`.
+- ROADMAP.md: de-mixed a Chinese sentence from the English doc.
+
+### Added (roadmap)
+- Phases 9-11: gateway transports & remote (v1.4.0) · site-side authoring
+  kit + readiness-audit CLI + demo site (v1.5.0) · policy tiers & spec
+  tracking (v1.6.0).
+
 ## [1.3.0] - 2026-08-28
+
+### Fixed (runtime/type consistency audit)
+- `session.readiness()` / pool readiness now return full `DiscoveredTool[]`
+  (dashboard readiness no longer reports 0 schema completeness on live sessions).
+- Invoke failure paths (`confirm-required`, internal catch) now include `url`.
+- Gateway `tools/list` maps `outputSchema`.
+- `computeReadiness` / `aggregateReadiness` re-exported from the package entry.
+- Default export gains type declaration parity (see types/index.d.ts).
 
 ### Added
 - `types/index.d.ts` — dsh-webmcp-types: fully typed bridge API contract
@@ -27,7 +49,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Notes
 - Elicitation (resultType:"input_required") evaluated against real gateway
   clients — deferred: no proven consumer among Claude Desktop/Codex yet;
-  argsWarning + confirm-required cover the缺参→补参→确认 loop. Re-evaluate
+  argsWarning + confirm-required cover the missing-args → corrected-args → confirm loop. Re-evaluate
   when a client documents input_required support.
 - npm publish still pending registry auth (not blocking this release).
 

@@ -113,12 +113,35 @@ Acceptance: drift → live notification in gateway e2e · tester round-trip on f
 ## Phase 8 · v1.3.0 — Contracts & polish ✅ shipped 2026-08-28
 
 - `dsh-webmcp-types` TS contract package for the bridge API (discover result, invoke payload, error taxonomy).
-- Evaluate elicitation (`resultType: "input_required"` + `requestState`) against real gateway clients; ship only if a client demonstrably benefits. — 评估结论：暂缓（见 CHANGELOG 1.3.0）.
+- Evaluate elicitation (`resultType: "input_required"` + `requestState`) against real gateway clients; ship only if a client demonstrably benefits. — assessment: deferred (see CHANGELOG 1.3.0).
 - npm publish (pending registry auth), marketplace listing follow-through.
+
+## Phase 9 · v1.4.0 — Gateway transports & remote
+
+- HTTP/SSE transport for the gateway (stdio-only today) so one gateway serves many MCP clients over LAN/tailscale; optional bearer token for remote exposure.
+- Multi-client concurrency on top of the existing origin-sharded pool.
+
+Acceptance: two remote MCP clients drive the same site concurrently via one gateway process; token-less requests rejected.
+
+## Phase 10 · v1.5.0 — Site-side authoring kit (the ecosystem's biggest gap)
+
+- Minimal embeddable `registerTool` snippet for site authors: dual-mount feature-detect (document + navigator), no-op on unsupported browsers, annotations-encouraged, origin-trial meta guidance.
+- `dsh-webmcp-serve --check <url>` readiness-audit CLI on top of lib/readiness.mjs — the open "agent-readiness scanner".
+- Companion demo site (GitHub Pages) exposing real annotated tools — dogfood + a permanent discovery target for every WebMCP client.
+
+Acceptance: a first-time site author goes from zero to a discoverable, well-annotated tool in under 10 minutes using only the kit.
+
+## Phase 11 · v1.6.0 — Policy tiers & spec tracking
+
+- Annotation policy config (`policy: { readOnly:'auto', destructive:'confirm', unknown:'ask' }`) layered on the v1.1.0 guard.
+- Declarative-API watch (webmachinelearning/webmcp #22 explainer): extend the html-form surface when declarative attributes land in the spec.
+- Chrome OT graduation: update dual-mount precedence & docs when native mounts ship in stable.
+- Re-evaluate elicitation (`input_required`) when a gateway client documents support.
 
 ## Track B — Ecosystem & ops (condensed)
 
 - Marketplace PR #3481 submitted, awaiting merge.
+- Age gate: re-trigger Submission gate once the repo passes 1 day (last check: only age rule remains).
 - Competitive watch: mcp-b polyfill (179k monthly downloads) is the de-facto reference implementation — track its API drift monthly.
 - Readiness-scanner niche: web-mcp.net monetizes readiness testing at $49/mo — our v1.2.0 dashboard readiness view is the open answer.
 - Challenge follow-up.
