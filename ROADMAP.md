@@ -32,6 +32,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v1.1.0` — agent-interface alignment: annotations passthrough + destructive guard + well-known probing
 - `v1.2.0` — push (tools/list_changed) + outputSchema passthrough + dashboard readiness & tester
 - `v1.3.0` — contracts & polish: `types/index.d.ts` TS contract package, elicitation evaluated (deferred), npm publish pending auth
+- `v1.4.0` — gateway HTTP/SSE transport + bearer auth + multi-client
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -116,7 +117,7 @@ Acceptance: drift → live notification in gateway e2e · tester round-trip on f
 - Evaluate elicitation (`resultType: "input_required"` + `requestState`) against real gateway clients; ship only if a client demonstrably benefits. — assessment: deferred (see CHANGELOG 1.3.0).
 - npm publish (pending registry auth), marketplace listing follow-through.
 
-## Phase 9 · v1.4.0 — Gateway transports & remote
+## Phase 9 · v1.4.0 — Gateway transports & remote ✅ shipped 2026-08-28
 
 - HTTP/SSE transport for the gateway (stdio-only today) so one gateway serves many MCP clients over LAN/tailscale; optional bearer token for remote exposure.
 - Multi-client concurrency on top of the existing origin-sharded pool.

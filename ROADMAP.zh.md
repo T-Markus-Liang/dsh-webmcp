@@ -32,6 +32,7 @@
 - `v1.1.0` —— agent 接口对齐：annotations 透传 + 破坏性护栏 + well-known 探测
 - `v1.2.0` —— 推送（tools/list_changed）+ outputSchema 透传 + 仪表盘就绪度与测试器
 - `v1.3.0` —— 契约与打磨：`types/index.d.ts` TS 契约包、elicitation 评估（暂缓）、npm 发布待授权
+- `v1.4.0` —— 网关 HTTP/SSE 传输 + bearer 认证 + 多客户端
 
 ## Phase 1 · v0.2.2 —— 工程硬化（本周）
 
@@ -116,7 +117,7 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 - 对照真实网关客户端评估 elicitation（`resultType: "input_required"` + `requestState`）；确有客户端受益才实现。—— 评估结论：暂缓（见 CHANGELOG 1.3.0）。
 - npm 发布（待 registry 授权）、市场收录跟进。
 
-## Phase 9 · v1.4.0 —— 网关传输与远程化
+## Phase 9 · v1.4.0 —— 网关传输与远程化 ✅ 已发布 2026-08-28
 
 - 网关增加 HTTP/SSE 传输（当前仅 stdio）→ 一个网关进程经局域网/tailscale 服务多个 MCP 客户端；远程暴露可选 bearer token。
 - 在既有按源分片池之上支持多客户端并发。

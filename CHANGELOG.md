@@ -16,6 +16,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.4.0] - 2026-08-28
+
+### Added
+- HTTP transport for the MCP gateway (Streamable-HTTP style): POST /mcp for
+  request/response, GET /sse (Server-Sent Events) for server→client
+  notifications such as tools/list_changed on manifest drift.
+- serveHttp(url, { host, port, token }) + --http/--host/--port/--token CLI
+  flags; bearer-token auth (missing/wrong → 401 / error -32001).
+- Multi-client concurrency over one shared protocol core + origin-pooled
+  session pipeline; list_changed broadcast to all live SSE subscribers.
+- Refactor: transport-agnostic createCore shared by stdio and http.
+- tests: test/gateway-http.test.mjs (4 tests — initialise/list/call/ping,
+  bearer auth, SSE endpoint banner, 404).
+
 ## [1.3.1] - 2026-08-28
 
 ### Fixed (independent review of the v1.3.0 push)

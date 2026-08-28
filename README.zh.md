@@ -43,6 +43,19 @@ dsh-webmcp-serve <url> [--allow-private-hosts] [--manifest-ttl-ms N] [--no-cache
 
 协议：换行分隔 JSON-RPC 2.0（MCP stdio），实现 `initialize` / `ping` / `tools/list` / `tools/call`。`tools/list` 来自页面 discover（双挂载 / Map / Promise / `executeToolByName` 全兼容）；`tools/call` 复用同一 `BrowserSession` 管线。Manifest 磁盘缓存于 `~/.dsh-webmcp/manifests/`（默认 TTL 300s；`--no-cache` 关闭）。诊断只走 stderr——stdout 是纯 MCP 通道。私网目标默认拒绝（与插件一致）。
 
+Server-Sent Events）用于 server→client 通知（如 `tools/list_changed`）。启用：
+
+```
+dsh-webmcp-serve <url> --http --host 0.0.0.0 --port 9000 --token <secret>
+```
+
+POST `/mcp` 承载请求/响应 JSON-RPC；GET `/sse` 为事件流。Bearer 认证：请求头 `Authorization: Bearer <secret>`（缺失/错误 → 401）。多个 MCP 客户端可并发调用；`tools/list_changed` 广播给所有活跃 SSE 订阅者。streamable-http MCP 客户端配置：
+
+```json
+{ "mcpServers": { "my-site": { "type": "http", "url": "http://host:9000/mcp",
+    "headers": { "Authorization": "Bearer <secret>" } } } }
+```
+
 ## 快速开始
 
 该插件注册了 2 个 agent 工具。
@@ -181,6 +194,8 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 | v0.5.0 | 可观测：JSONL 追踪 + 仪表盘 + manifest 漂移 | ✅ 已发布 |
 | v1.1.0 | annotations 透传 + 破坏性护栏 + well-known 探测 | ✅ 已发布 |
 | v1.2.0 | 推送（tools/list_changed）+ outputSchema 透传 + 仪表盘就绪度与测试器 | ✅ 已发布 |
+| v1.3.0 | TS 契约 + 类型/运行时一致性审计 | ✅ 已发布 |
+| v1.4.0 | 网关 HTTP/SSE 传输 + bearer 认证 + 多客户端 | ✅ 已发布 |
 | 后续 | polyfill 自动注入、诊断包、dsh-browser 互通 | 探索中 |
 
 ## License

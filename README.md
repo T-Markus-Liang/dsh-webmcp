@@ -43,6 +43,22 @@ Client config example:
 
 Protocol: newline-delimited JSON-RPC 2.0 (MCP stdio) implementing `initialize` / `ping` / `tools/list` / `tools/call`. `tools/list` comes from page discover (dual-mount / Map / Promise / `executeToolByName` fully compatible); `tools/call` reuses the same `BrowserSession` pipeline. Manifests are disk-cached under `~/.dsh-webmcp/manifests/` (default TTL 300s; `--no-cache` disables). Diagnostics go to stderr only — stdout is the pure MCP channel. Private-network targets are refused by default (plugin parity).
 
+Server-Sent Events) for server→client notifications such as `tools/list_changed`. Enable with:
+
+```
+dsh-webmcp-serve <url> --http --host 0.0.0.0 --port 9000 --token <secret>
+```
+
+POST `/mcp` carries request/response JSON-RPC; GET `/sse` is the event stream.
+Bearer auth: send `Authorization: Bearer <secret>` (missing/wrong → 401). Multiple
+MCP clients can call it concurrently; `tools/list_changed` is broadcast to every
+live SSE subscriber. A streamable-http MCP client config:
+
+```json
+{ "mcpServers": { "my-site": { "type": "http", "url": "http://host:9000/mcp",
+    "headers": { "Authorization": "Bearer <secret>" } } } }
+```
+
 ## Quick start
 
 The plugin registers two agent tools.
@@ -192,6 +208,8 @@ Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md
 | v0.5.0 | observability: JSONL trace + dashboard + manifest drift | ✅ shipped |
 | v1.1.0 | annotations passthrough + destructive guard + well-known probing | ✅ shipped |
 | v1.2.0 | push (tools/list_changed) + outputSchema passthrough + dashboard readiness & tester | ✅ shipped |
+| v1.3.0 | TS contract + type/runtime consistency audit | ✅ shipped |
+| v1.4.0 | gateway HTTP/SSE transport + bearer auth + multi-client | ✅ shipped |
 | later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |
 
 ## License
