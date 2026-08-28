@@ -16,22 +16,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
-## [1.2.2] - 2026-08-28
-
-### Changed
-- Donation address switched to a centralized-exchange deposit address
-  (0x0C6bF46952b0C4290207a86D3183aa88702Ae6F7) for stronger account privacy —
-  on-chain observers can see incoming tips but not where funds go afterward.
-- DONATE.md gains a privacy note + network-matching caveat.
-
-## [1.2.1] - 2026-08-28
-
-### Changed
-- No subscription teird — the project is free and donation-supported.
-- Added DONATE.md + README Support/DONATIONS sections (EN/ZH) + dashboard
-  footer: USDC / USDT / ETH (Ethereum) and USDC / USDT / BNB (BSC) to
-  0xd8d99e14320003A6df684BE9255B4DD5e4AF474F.
-
 ## [1.2.0] - 2026-08-28
 
 ### Added
