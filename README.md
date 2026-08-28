@@ -121,6 +121,14 @@ a `stats` block. Tracing appends one JSONL line per call to
 `_meta.drift = { added, removed }` (in-memory per-origin baseline) plus a
 `manifest-drift` trace line.
 
+**Readiness endpoint**: `GET /webmcp/readiness` returns the Agent-readiness view —
+per-origin `score`, schema completeness, annotation coverage, and `readOnly` /
+`destructive` counts (`score = 100 * (0.6 * schema + 0.4 * annotations)`). The same
+dashboard hosts the interactive **Tool tester** (a `POST /webmcp/tester` form): pick
+a discovered tool, enter its args, toggle the `confirm` checkbox, and read back the
+call result JSON (`body: { url, tool, args, confirm }`). This is the free, open
+answer to the commercial readiness scanners (web-mcp.net charges $49/mo).
+
 ## Scope & relationship to the W3C proposal
 
 WebMCP itself is standardizing fast: **Chrome 149** and **Edge 150** ship it behind an
@@ -179,6 +187,7 @@ Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md
 | v0.4.0 | per-origin session pool: concurrency + LRU + idle reclamation | ✅ shipped |
 | v0.5.0 | observability: JSONL trace + dashboard + manifest drift | ✅ shipped |
 | v1.1.0 | annotations passthrough + destructive guard + well-known probing | ✅ shipped |
+| v1.2.0 | push (tools/list_changed) + outputSchema passthrough + dashboard readiness & tester | ✅ shipped |
 | later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |
 
 ## License

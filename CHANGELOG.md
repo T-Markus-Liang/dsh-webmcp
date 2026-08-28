@@ -16,6 +16,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.2.0] - 2026-08-28
+
+### Added
+- MCP gateway advertises tools.listChanged:true; a client subscribing via
+  notifications/subscribe receives notifications/tools/list_changed on
+  manifest drift (notifications/unsubscribe opts out).
+- outputSchema passthrough on discover results and gateway tools/list.
+- Structured-preserving truncation: oversized results first trim long human
+  text fields (text/description/message/summary) keeping structured fields
+  intact, then fall back to the clipped envelope.
+- Dashboard: Agent-readiness view (per-origin score, schema completeness,
+  annotation coverage, read-only/destructive counts) + interactive Tool
+  tester (POST /webmcp/tester). lib/readiness.mjs.
+
 ## [1.1.1] - 2026-08-28
 
 ### Fixed

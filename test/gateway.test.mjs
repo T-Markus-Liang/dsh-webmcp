@@ -146,7 +146,7 @@ test('webmcp gateway stdio: frozen protocol contract', { timeout: 120_000, skip:
     assert.ok(init.result, `initialize missing result: ${JSON.stringify(init)}`)
     assert.match(init.result.serverInfo.name, /dsh-webmcp/, 'serverInfo.name must contain dsh-webmcp')
     assert.equal(init.result.protocolVersion, '2025-06-18', 'protocolVersion must be echoed back')
-    assert.deepEqual(init.result.capabilities, { tools: { listChanged: false } })
+    assert.deepEqual(init.result.capabilities, { tools: { listChanged: true } }, 'v1.2.0: gateway advertises list_changed support')
 
     // ---- initialized notification (no id → no response) ------------------
     gw.notify('notifications/initialized')

@@ -276,6 +276,55 @@ test('gateway: malformed line gets -32700 parse error', async () => {
   })
 })
 
+test('gateway: list_changed pushed to a subscribed client on drift', async () => {
+  const { serve } = await import('../lib/gateway.mjs')
+  const { PassThrough } = await import('node:stream')
+  const { mkdtempSync } = await import('node:fs')
+  const { tmpdir } = await import('node:os')
+  const { join } = await import('node:path')
+  process.env.DSH_WEBMCP_MANIFEST_DIR = mkdtempSync(join(tmpdir(), 'dsh-webmcp-mf-'))
+  const input = new PassThrough()
+  const output = new PassThrough()
+  let n = 0
+  const mockSession = {
+    discover: async () => {
+      n += 1
+      const tools = [{ name: 'a', description: 'a', inputSchema: {} }]
+      if (n >= 2) tools.push({ name: 'b', description: 'b', inputSchema: {} })
+      return { ok: true, tools }
+    },
+    invoke: async () => ({ ok: true, result: {} }),
+    close: async () => {},
+  }
+  const server = serve({ url: 'https://drift.test', session: mockSession, input, output, manifestTtlMs: 0 })
+  const messages = []
+  const pending = new Map()
+  output.on('data', (d) => {
+    for (const line of d.toString().split('\n')) {
+      const t = line.trim()
+      if (!t) continue
+      let m
+      try { m = JSON.parse(t) } catch { continue }
+      messages.push(m)
+      if (m.id !== undefined && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id) }
+    }
+  })
+  const rpc = (id, method, params) => new Promise((resolve) => {
+    pending.set(id, resolve)
+    input.write(JSON.stringify({ jsonrpc: '2.0', id, method, ...(params ? { params } : {}) }) + '\n')
+  })
+  try {
+    await rpc(1, 'tools/list') // discover #1 → lastNames = [a]
+    input.write(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/subscribe', params: { method: 'tools/list_changed' } }) + '\n')
+    await rpc(2, 'tools/call', { name: 'nope', arguments: {} }) // unknown → refresh → discover #2 grows set
+    await new Promise((r) => setTimeout(r, 120))
+    const notif = messages.find((m) => m.method === 'notifications/tools/list_changed')
+    assert.ok(notif, 'expected notifications/tools/list_changed after drift')
+  } finally {
+    await server.close()
+  }
+})
+
 test('gateway: unknown method gets -32601', async () => {
   await withGateway(async ({ rpc }) => {
     const res = await rpc(9, 'resources/list')

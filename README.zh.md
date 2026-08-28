@@ -119,6 +119,12 @@ manifest 漂移事件。`/webmcp/status` 同步内嵌 `stats` 摘要。追踪按
 **Manifest 漂移检测**：同一 URL 再次 discover 时若工具集合变化，结果携带
 `_meta.drift = { added, removed }`（按源内存基线），并写入 `manifest-drift` 追踪行。
 
+**就绪度端点**：`GET /webmcp/readiness` 返回 Agent 就绪度视图——按源的 `score`、schema 完整度、注解覆盖率，
+以及 `readOnly` / `destructive` 计数（`score = 100 * (0.6 * schema + 0.4 * annotations)`）。同一仪表盘还提供
+交互式 **Tool tester**（`POST /webmcp/tester` 表单）：选择已发现的工具、填写参数、勾选 `confirm` 复选框，即可
+读回调用结果 JSON（`body: { url, tool, args, confirm }`）。这是对商用就绪度扫描器（web-mcp.net 收费 $49/月）的
+免费开源对位答案。
+
 ## 范围说明：与 W3C 提案的关系
 
 WebMCP 标准化进展迅速：**Chrome 149** 与 **Edge 150** 已通过 Origin Trial 上线实验支持，
@@ -170,6 +176,7 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 | v0.4.0 | 按源会话池：并发 + LRU 驱逐 + 空闲回收 | ✅ 已发布 |
 | v0.5.0 | 可观测：JSONL 追踪 + 仪表盘 + manifest 漂移 | ✅ 已发布 |
 | v1.1.0 | annotations 透传 + 破坏性护栏 + well-known 探测 | ✅ 已发布 |
+| v1.2.0 | 推送（tools/list_changed）+ outputSchema 透传 + 仪表盘就绪度与测试器 | ✅ 已发布 |
 | 后续 | polyfill 自动注入、诊断包、dsh-browser 互通 | 探索中 |
 
 ## License

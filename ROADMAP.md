@@ -30,6 +30,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v0.5.0` — observability: JSONL trace + /webmcp/dashboard + manifest-drift detection
 - `v1.0.0` — stabilization: security self-review, real-site dataset, OT watch (npm publish pending auth)
 - `v1.1.0` — agent-interface alignment: annotations passthrough + destructive guard + well-known probing
+- `v1.2.0` — push (tools/list_changed) + outputSchema passthrough + dashboard readiness & tester
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -100,7 +101,7 @@ Already aligned: dual-mount feature-detect (CloudNSite's #1 hard-won lesson — 
 
 Acceptance: annotations visible on the Persona demo tools · destructive guard unit + e2e · well-known fixture route probed.
 
-## Phase 7 · v1.2.0 — Push & readiness
+## Phase 7 · v1.2.0 — Push & readiness ✅ shipped 2026-08-28
 
 - **list_changed push**: gateway advertises `tools.listChanged: true`; manifest drift on refresh emits `notifications/tools/list_changed`.
 - **outputSchema passthrough**: discover surfaces `outputSchema`; truncation envelope keeps structured fields intact and only clips human text.

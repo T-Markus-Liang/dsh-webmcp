@@ -30,6 +30,7 @@
 - `v0.5.0` —— 可观测：JSONL 追踪 + /webmcp/dashboard + manifest 漂移检测
 - `v1.0.0` —— 稳定化：安全自查、真实站点数据集、OT 跟踪（npm 发布待授权）
 - `v1.1.0` —— agent 接口对齐：annotations 透传 + 破坏性护栏 + well-known 探测
+- `v1.2.0` —— 推送（tools/list_changed）+ outputSchema 透传 + 仪表盘就绪度与测试器
 
 ## Phase 1 · v0.2.2 —— 工程硬化（本周）
 
@@ -100,7 +101,7 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 
 验收：Persona 演示站工具可见 annotations · 破坏性护栏单测 + e2e · well-known 夹具路由探测通过。
 
-## Phase 7 · v1.2.0 —— 推送与就绪度
+## Phase 7 · v1.2.0 —— 推送与就绪度 ✅ 已发布 2026-08-28
 
 - **list_changed 推送**：网关声明 `tools.listChanged: true`；manifest 漂移时主动发 `notifications/tools/list_changed`。
 - **outputSchema 透传**：discover 暴露 `outputSchema`；截断信封保留结构化字段、只裁人话文本。
