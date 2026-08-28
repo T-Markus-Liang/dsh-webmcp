@@ -16,6 +16,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.2.1] - 2026-08-28
+
+### Changed
+- No subscription teird — the project is free and donation-supported.
+- Added DONATE.md + README Support/DONATIONS sections (EN/ZH) + dashboard
+  footer: USDC / USDT / ETH (Ethereum) and USDC / USDT / BNB (BSC) to
+  0xd8d99e14320003A6df684BE9255B4DD5e4AF474F.
+
 ## [1.2.0] - 2026-08-28
 
 ### Added

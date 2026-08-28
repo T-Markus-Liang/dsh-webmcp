@@ -190,6 +190,18 @@ Condensed; full ladder with acceptance criteria lives in [ROADMAP.md](ROADMAP.md
 | v1.2.0 | push (tools/list_changed) + outputSchema passthrough + dashboard readiness & tester | ✅ shipped |
 | later  | polyfill auto-injection, diagnostics bundle, dsh-browser interop | exploratory |
 
+## Support / Donations
+
+dsh-webmcp is free, open-source, and **subscription-free** — there is no tier
+to buy. If it helps your agent, a one-off tip is appreciated. We accept
+USDC / USDT / ETH (Ethereum) and USDC / USDT / BNB (BNB Smart Chain):
+
+```
+0xd8d99e14320003A6df684BE9255B4DD5e4AF474F
+```
+
+See [DONATE.md](DONATE.md) for network notes and what donations fund. / 详见 [DONATE.md](DONATE.md)。
+
 ## License
 
 MIT

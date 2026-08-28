@@ -179,6 +179,16 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 | v1.2.0 | 推送（tools/list_changed）+ outputSchema 透传 + 仪表盘就绪度与测试器 | ✅ 已发布 |
 | 后续 | polyfill 自动注入、诊断包、dsh-browser 互通 | 探索中 |
 
+## 支持 / 打赏
+
+dsh-webmcp 完全免费开源、**无订阅制**——没有任何付费档位。如果它对你的 agent 有帮助，欢迎一键打赏。接受 USDC / USDT / ETH（以太坊主网）与 USDC / USDT / BNB（BNB 智能链）：
+
+```
+0xd8d99e14320003A6df684BE9255B4DD5e4AF474F
+```
+
+网络说明与打赏用途见 [DONATE.md](DONATE.md)。支付截图可私信，感谢每一位支持者。
+
 ## License
 
 MIT
