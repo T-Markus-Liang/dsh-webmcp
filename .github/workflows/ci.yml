@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -15,27 +15,37 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-
       - name: Install dependencies
-        env:
-          # Install playwright-core only; never download browser binaries in CI.
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-          PLAYWRIGHT_BROWSERS_PATH: "0"
         run: npm install
-
-      - name: Syntax check lib/index.js
-        run: node --check lib/index.js
-
-      - name: Syntax check lib/page-snippet.js
-        run: node --check lib/page-snippet.js
-
-      # Unit tests must not depend on the network or a real browser. Any e2e
-      # coverage is gated behind an environment variable and skipped by CI.
-      - name: Run unit tests
+      - name: Syntax-check ALL sources (incl. lib/page-agent.js)
+        run: node scripts/check.mjs
+      - name: Unit + contract tests (e2e gated off)
         run: npm test
+
+  e2e:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+      - name: Install dependencies (skip auto browser download)
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: npm install
+      - name: Install Chromium for real-browser e2e
+        run: node node_modules/playwright-core/cli.js install chromium
+      - name: Real-browser e2e (serial, gated)
+        env:
+          DSH_WEBMCP_TEST_E2E: "1"
+          # Let findChromium resolve the freshly installed Chromium from cache.
+        run: node --test --test-concurrency=1 test/e2e.test.mjs test/gateway.test.mjs test/pool-e2e.test.mjs
