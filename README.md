@@ -87,6 +87,10 @@ All options are optional and are set under the `config` block in `cordis.patch.y
 
 Since v0.1.1 tool discovery probes BOTH spec mounts — `navigator.modelContext` and `document.modelContext` — alongside `window.webmcp` and declarative `<form data-webmcp-tool>` elements. Since v0.2.1 it also understands polyfill/native storage shapes (Map-backed tool stores, promise-returning `getTools()`) and routes calls through the mount's own `executeToolByName` when a registered entry carries no inline function. Since v1.1.0 discovery also probes `/.well-known/webmcp` and `/.well-known/mcp.json` (surface `well-known`), and every tool entry carries its MCP `annotations`.
 
+## TypeScript types
+
+TypeScript consumers: `import type { DiscoverResult, InvokeResult, BridgeConfig } from 'dsh-webmcp/types'` — the bridge API is fully typed via `types/index.d.ts` (no build step).
+
 ## Chromium resolution order
 
 When choosing a Chromium executable, the plugin tries, in order:

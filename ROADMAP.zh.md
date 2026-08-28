@@ -31,6 +31,7 @@
 - `v1.0.0` —— 稳定化：安全自查、真实站点数据集、OT 跟踪（npm 发布待授权）
 - `v1.1.0` —— agent 接口对齐：annotations 透传 + 破坏性护栏 + well-known 探测
 - `v1.2.0` —— 推送（tools/list_changed）+ outputSchema 透传 + 仪表盘就绪度与测试器
+- `v1.3.0` —— 契约与打磨：`types/index.d.ts` TS 契约包、elicitation 评估（暂缓）、npm 发布待授权
 
 ## Phase 1 · v0.2.2 —— 工程硬化（本周）
 
@@ -109,10 +110,10 @@ WebMCP 本质上是 MCP 的 Web 化；不桥接 MCP 生态，只做了一半。
 
 验收：漂移 → 网关 e2e 实时收到通知 · 仪表盘页面完成夹具站调用往返。
 
-## Phase 8 · v1.3.0 —— 契约与打磨
+## Phase 8 · v1.3.0 —— 契约与打磨 ✅ 已发布 2026-08-28
 
 - `dsh-webmcp-types` TS 契约包（discover 结果 / invoke 载荷 / 错误码）。
-- 对照真实网关客户端评估 elicitation（`resultType: "input_required"` + `requestState`）；确有客户端受益才实现。
+- 对照真实网关客户端评估 elicitation（`resultType: "input_required"` + `requestState`）；确有客户端受益才实现。—— 评估结论：暂缓（见 CHANGELOG 1.3.0）。
 - npm 发布（待 registry 授权）、市场收录跟进。
 
 ## Track B —— 生态与运营（精简保留）

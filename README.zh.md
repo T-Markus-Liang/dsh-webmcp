@@ -87,6 +87,10 @@ agent:
 
 自 v0.1.1 起，工具发现会同时探测规范的两个挂载点——`navigator.modelContext` 与 `document.modelContext`——外加 `window.webmcp` 和声明式 `<form data-webmcp-tool>` 元素。自 v0.2.1 起进一步兼容 polyfill/原生实现的存储形态（Map 工具表、返回 Promise 的 `getTools()`），并在注册项无内联函数时自动经挂载点自身的 `executeToolByName` 分发调用。自 v1.1.0 起，discover 还会额外探测 `/.well-known/webmcp` 与 `/.well-known/mcp.json`（surface 记为 `well-known`），且每个工具条目都携带其 MCP `annotations`。
 
+## TypeScript 类型契约
+
+TypeScript 使用者：`import type { DiscoverResult, InvokeResult, BridgeConfig } from 'dsh-webmcp/types'` —— 桥接 API 通过 `types/index.d.ts` 获得完整类型（无需构建步骤）。
+
 ## Chromium 解析顺序
 
 选择 Chromium 可执行文件时，插件按以下顺序依次尝试：

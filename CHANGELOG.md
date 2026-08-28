@@ -16,6 +16,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.3.0] - 2026-08-28
+
+### Added
+- `types/index.d.ts` — dsh-webmcp-types: fully typed bridge API contract
+  (BridgeConfig, ToolSurface, DiscoveredTool, Discover/Invoke results,
+  BridgeErrorCode union, readiness, pool/gateway shapes). Wired via
+  package.json `types` + `exports` (`.`, `./types`); no build step.
+
+### Notes
+- Elicitation (resultType:"input_required") evaluated against real gateway
+  clients — deferred: no proven consumer among Claude Desktop/Codex yet;
+  argsWarning + confirm-required cover the缺参→补参→确认 loop. Re-evaluate
+  when a client documents input_required support.
+- npm publish still pending registry auth (not blocking this release).
+
 ## [1.2.0] - 2026-08-28
 
 ### Added

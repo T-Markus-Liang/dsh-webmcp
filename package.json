@@ -1,13 +1,19 @@
 {
   "name": "dsh-webmcp",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "WebMCP bridge for DeepSeek Harness: let your agent discover and call tools that websites expose via the W3C WebMCP protocol (site tools), through a built-in headless browser.",
   "type": "module",
   "main": "./lib/index.js",
   "exports": {
-    ".": "./lib/index.js",
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./lib/index.js"
+    },
     "./cordis.patch.yml": "./cordis.patch.yml",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./types": {
+      "types": "./types/index.d.ts"
+    }
   },
   "files": [
     "lib",
@@ -19,10 +25,11 @@
     "ROADMAP.zh.md",
     "CONTRIBUTING.md",
     "bin",
-    "docs"
+    "docs",
+    "types"
   ],
   "scripts": {
-    "test": "node --test test/unit.test.mjs test/trace.test.mjs test/readiness.test.mjs test/e2e.test.mjs test/gateway.test.mjs test/pool.test.mjs test/pool-e2e.test.mjs",
+    "test": "node --test test/unit.test.mjs test/trace.test.mjs test/readiness.test.mjs test/types.test.mjs test/e2e.test.mjs test/gateway.test.mjs test/pool.test.mjs test/pool-e2e.test.mjs",
     "check": "node --check lib/index.js && node --check lib/page-snippet.js && npm test"
   },
   "keywords": [
@@ -60,5 +67,6 @@
   },
   "bin": {
     "dsh-webmcp-serve": "./bin/dsh-webmcp-serve.mjs"
-  }
+  },
+  "types": "types/index.d.ts"
 }

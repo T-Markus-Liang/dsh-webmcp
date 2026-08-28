@@ -31,6 +31,7 @@ Ratings are grounded in empirical evidence gathered across the project's develop
 - `v1.0.0` — stabilization: security self-review, real-site dataset, OT watch (npm publish pending auth)
 - `v1.1.0` — agent-interface alignment: annotations passthrough + destructive guard + well-known probing
 - `v1.2.0` — push (tools/list_changed) + outputSchema passthrough + dashboard readiness & tester
+- `v1.3.0` — contracts & polish: `types/index.d.ts` TS contract package, elicitation evaluated (deferred), npm publish pending auth
 
 ## Phase 1 · v0.2.2 — Engineering hardening (this week)
 
@@ -109,10 +110,10 @@ Acceptance: annotations visible on the Persona demo tools · destructive guard u
 
 Acceptance: drift → live notification in gateway e2e · tester round-trip on fixture from the dashboard page.
 
-## Phase 8 · v1.3.0 — Contracts & polish
+## Phase 8 · v1.3.0 — Contracts & polish ✅ shipped 2026-08-28
 
 - `dsh-webmcp-types` TS contract package for the bridge API (discover result, invoke payload, error taxonomy).
-- Evaluate elicitation (`resultType: "input_required"` + `requestState`) against real gateway clients; ship only if a client demonstrably benefits.
+- Evaluate elicitation (`resultType: "input_required"` + `requestState`) against real gateway clients; ship only if a client demonstrably benefits. — 评估结论：暂缓（见 CHANGELOG 1.3.0）.
 - npm publish (pending registry auth), marketplace listing follow-through.
 
 ## Track B — Ecosystem & ops (condensed)
