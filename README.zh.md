@@ -184,7 +184,7 @@ agent 的浏览器中实现人机协作。本插件是一个务实的过渡期�
 dsh-webmcp 完全免费开源、**无订阅制**——没有任何付费档位。如果它对你的 agent 有帮助，欢迎一键打赏。接受 USDC / USDT / ETH（以太坊主网）与 USDC / USDT / BNB（BNB 智能链）：
 
 ```
-0xd8d99e14320003A6df684BE9255B4DD5e4AF474F
+0x0C6bF46952b0C4290207a86D3183aa88702Ae6F7
 ```
 
 网络说明与打赏用途见 [DONATE.md](DONATE.md)。支付截图可私信，感谢每一位支持者。

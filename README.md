@@ -197,7 +197,7 @@ to buy. If it helps your agent, a one-off tip is appreciated. We accept
 USDC / USDT / ETH (Ethereum) and USDC / USDT / BNB (BNB Smart Chain):
 
 ```
-0xd8d99e14320003A6df684BE9255B4DD5e4AF474F
+0x0C6bF46952b0C4290207a86D3183aa88702Ae6F7
 ```
 
 See [DONATE.md](DONATE.md) for network notes and what donations fund. / 详见 [DONATE.md](DONATE.md)。

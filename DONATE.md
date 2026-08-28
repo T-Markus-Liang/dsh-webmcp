@@ -20,12 +20,18 @@ Send any amount of the following on their native networks / 以下代币请走�
 **Address / 收款地址:**
 
 ```
-0xd8d99e14320003A6df684BE9255B4DD5e4AF474F
+0x0C6bF46952b0C4290207a86D3183aa88702Ae6F7
 ```
 
 > Send only compatible assets on the matching network above — txs on the wrong
 > network (e.g. USDT on BSC to the Ethereum address) may be lost and cannot be
 > recovered. / 请只发上表对应网络上的资产——发错网络（如把 BSC 上的 USDT 发到 ETH 地址）可能丢失且无法找回。
+>
+> **Privacy note**: this is a centralized-exchange deposit address. On-chain
+> observers can see incoming donations but cannot trace which account they
+> belong to or where the funds go afterward — all outbound movement happens
+> inside the exchange ledger. Use it only for assets/networks this address
+> accepts. / 隐私说明：这是中心化交易所充值地址。链上观察者能看到资金进入，但无法关联到账户或追踪后续去向——之后的动账都发生在交易所内部账本。请仅发送该地址所支持链上的资产。
 
 ## What donations fund / 打赏用途
 
