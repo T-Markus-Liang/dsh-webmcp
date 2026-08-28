@@ -43,6 +43,9 @@ test('types: package.json wires types + exports to the d.ts', () => {
   assert.ok(pkg.files.includes('types'), 'files whitelist must ship types/')
 })
 
-test('types: version aligns with the package', () => {
-  assert.equal(pkg.version, '1.3.1')
+test('types: version aligns with the runtime VERSION const', () => {
+  const idx = readFileSync(join(root, 'lib', 'index.js'), 'utf8')
+  const m = idx.match(/const VERSION = '([^']+)'/)
+  assert.ok(m, 'VERSION const missing in lib/index.js')
+  assert.equal(pkg.version, m[1], 'package.json version must match lib/index.js VERSION')
 })
