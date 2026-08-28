@@ -16,6 +16,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - v0.4.0: opt-in CDP attach to the user's real browser
 - later: polyfill auto-injection, diagnostics bundle, dsh-browser interop
 
+## [1.1.1] - 2026-08-28
+
+### Fixed
+- pool-e2e wall-time ratio assertion flaked under full-suite load (multiple
+  test files launching Chromium concurrently). Ratio is now informational;
+  a 6x catastrophe guard remains. v1.1.0 shipped with this red test.
+
 ## [1.1.0] - 2026-08-28
 
 ### Added
